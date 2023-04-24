@@ -45,8 +45,17 @@ class Bullet(pygame.sprite.Sprite):
         self.x += self.unitVector[0]
         self.y += self.unitVector[1]
 
+    def __str__(self):
+        return "Location: " + str(self.x) + ", " + str(self.y) + "\n" \
+                     "Target: " + str(self.target_x) + ", " + str(self.target_y) + "\n" \
+                     "Vector (X, Y, Magnitude): " + str(self.displaceVector) + ", " + str(self.displaceVectorMagnitude)
+
 
 class RocketBullet(Bullet):
     def __init__(self, image, x, y, target_x, target_y):
         super().__init__(image, x, y, target_x, target_y)
 
+
+class SilverTank(Tank):
+    def __init__(self, x, y, image, speed, direction):
+        super().__init__(x, y, image, speed, direction)
