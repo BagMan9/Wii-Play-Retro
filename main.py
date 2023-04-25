@@ -5,13 +5,16 @@ import wiiplaytanks as mys
 
 # Initialization
 pygame.init()
-gameWindow = pygame.display.set_mode((1280, 720))
+verticalResolution = 720
+windowSize = verticalResolution * (16 / 9), verticalResolution
+gameWindow = pygame.display.set_mode(windowSize)
 pygame.display.set_caption("WiiPlay Retro")
 clock = pygame.time.Clock()
 running = True
 dt = .01
 gameState = 0
 Title_Font = pygame.font.Font('freesansbold.ttf', 64)
+hud = mys.Hud(gameWindow, windowSize)
 
 # Sprite
 
@@ -48,10 +51,7 @@ def main():
 
         gameWindow.fill("black")
 
-        Title_Text = Title_Font.render("Wii Play Retro", True, "orange")
-        Title_Text_Rect = Title_Text.get_rect()
-        Title_Text_Rect.center = 1280/2, 720/2
-        gameWindow.blit(Title_Text, Title_Text_Rect)
+        hud.main_menu("Wii Play Retro", "orange")
 
         pygame.display.flip()
 
