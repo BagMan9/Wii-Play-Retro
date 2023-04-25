@@ -19,19 +19,44 @@ class SpriteSheet(object):
             image.set_colorkey((colorKey, pygame.RLEACCEL))
         return image
 
-# Basic Objects
+
+class Hud:
+
+    def __init__(self, gameWindow, windowSize, titleFontFile='freesansbold.ttf', mainFontFile='freesansbold.ttf'):
+        self.score = 0
+        self.lives = 3
+        self.level = 1
+        self.gameWindow = gameWindow
+        self.windowSize = windowSize
+        self.titleSize = 64
+        self.mainSize = 24
+        self.titleFont = pygame.font.Font(titleFontFile, self.titleSize)
+        self.mainFont = pygame.font.Font(mainFontFile, self.mainSize)
+
+    def main_menu(self, text, color, x_offset=0, y_offset=0):
+        titleText = self.titleFont.render(text, True, color)
+        titleTextRect = titleText.get_rect()
+        titleTextRect.center = self.windowSize[0] / 2 + x_offset, self.windowSize[1] / 2 + y_offset
+        self.gameWindow.blit(titleText, titleTextRect)
+
+    def game_info(self, scoreLocation=0, levelLocation=0, livesLocation=0):
+        scoreString = f"Score: {self.score}"
+        scoreText = self.mainFont.render(scoreString, True, "red")
+        scoreTextRect = scoreText.get_rect()
+        scoreTextRect.topleft = 8, 8
+        self.gameWindow.blit(scoreText, scoreTextRect)
 
 
 class Tank(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale((pygame.transform.rotate(image, 270)), (100, 100))
+        self.image = pygame.transform.scale((pygame.transform.rotate(image, 270)), (120, 100))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.x = x
         self.y = y
         self.firing = False
-        self.firing_delay = 100
+        self.firing_delay = 200
         self.firing_time = 0
 
     def loc(self):
@@ -43,7 +68,7 @@ class Tank(pygame.sprite.Sprite):
         else:
             self.firing_time = pygame.time.get_ticks()
             self.firing = True
-            projectile = Bullet("Assets/bullet16.jpg", self.x+100, self.y+50, target_coord[0], target_coord[1])
+            projectile = Bullet("Assets/bullet16.jpg", self.x + 100, self.y + 50, target_coord[0], target_coord[1])
             group.add(projectile)
 
     def update(self):
@@ -64,15 +89,19 @@ class Bullet(pygame.sprite.Sprite):
         self.target_y = target_y
         self.displaceVector = self.target_x - self.x, self.target_y - self.y
         self.displaceVectorMagnitude = abs(math.sqrt(((self.target_x - self.x) ** 2) + ((self.target_y - self.y) ** 2)))
-        self.unitVector = self.displaceVector[0] / self.displaceVectorMagnitude, \
-                          self.displaceVector[1] / self.displaceVectorMagnitude
+        self.unitVector = [self.displaceVector[0] / self.displaceVectorMagnitude,
+                           self.displaceVector[1] / self.displaceVectorMagnitude]
 
     def loc(self):
         return self.x, self.y
 
     def update(self):
-        self.x += self.unitVector[0]*10
-        self.y += self.unitVector[1]*10
+        self.x += self.unitVector[0] * 10
+        self.y += self.unitVector[1] * 10
+        if not 0 < self.x < 1280:
+            self.unitVector[0] = -self.unitVector[0]
+        if not 0 < self.y < 720:
+            self.unitVector[1] = -self.unitVector[1]
         self.rect.center = self.x, self.y
 
     def __str__(self):
