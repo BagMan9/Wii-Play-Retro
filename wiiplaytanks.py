@@ -19,43 +19,27 @@ class SpriteSheet(object):
             image.set_colorkey((colorkey, pygame.RLEACCEL))
         return image
 
-
-class Player(pygame.sprite.Sprite):
-
-    def __init__(self, x, y, image):
-        super().__init__()
-        self.x = x
-        self.y = y
-        self.image = pygame.transform.scale((pygame.transform.rotate(image, 270)), (100, 100))
-        self.rect = image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y
-
-    def update(self):
-        self.rect.x = self.x
-        self.rect.y = self.y
-
-    def shoot(self, target_coord, group):
-        proj = Bullet("Assets/bullet16.jpg", self.x, self.y, target_coord[0], target_coord[1])
-        group.add(proj)
+# Basic Objects
 
 
 class Tank(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, speed, direction):
+    def __init__(self, x, y, image):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(image)
+        self.image = pygame.transform.scale((pygame.transform.rotate(image, 270)), (100, 100))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.speed = speed
-        self.direction = direction
         self.x = x
         self.y = y
 
     def loc(self):
         return self.x, self.y
 
-    def shoot(self, target_coord):
-        Bullet("Assets/bullet16.jpg", self.x+100, self.y+50, target_coord[0], target_coord[1])
+    def shoot(self, target_coord, group):
+        projectile = Bullet("Assets/bullet16.jpg", self.x+100, self.y+50, target_coord[0], target_coord[1])
+        group.add(projectile)
+
+    def update(self):
+        self.rect.center = self.x, self.y
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -89,11 +73,21 @@ class Bullet(pygame.sprite.Sprite):
             self.displaceVectorMagnitude)
 
 
+class Player(Tank):
+    def __init__(self, x, y, image):
+        super().__init__(x, y, image)
+
+
+class Enemy(Tank):
+    def __init__(self, x, y, image):
+        super().__init__(x, y, image)
+
+
 class RocketBullet(Bullet):
     def __init__(self, image, x, y, target_x, target_y):
         super().__init__(image, x, y, target_x, target_y)
 
 
 class SilverTank(Tank):
-    def __init__(self, x, y, image, speed, direction):
-        super().__init__(x, y, image, speed, direction)
+    def __init__(self, x, y, image):
+        super().__init__(x, y, image)
