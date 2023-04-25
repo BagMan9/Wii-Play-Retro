@@ -12,13 +12,31 @@ class SpriteSheet(object):
     def image_at(self, rectangle, colorkey=None):
         rect = pygame.Rect(rectangle)
         image = pygame.Surface(rect.size).convert()
-        image.blit(self.sheet, (0,0), rect)
+        image.blit(self.sheet, (0, 0), rect)
         if colorkey is not None:
             if colorkey == -1:
-                colorkey = image.get_at((0,0))
+                colorkey = image.get_at((0, 0))
             image.set_colorkey((colorkey, pygame.RLEACCEL))
         return image
 
+
+class Player(pygame.sprite.Sprite):
+
+    def __init__(self, x, y, image):
+        super().__init__()
+        self.x = x
+        self.y = y
+        self.image = pygame.transform.scale((pygame.transform.rotate(image, 270)), (300, 100))
+        self.rect = image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+    def update(self):
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+    def shoot(self, target_coord):
+        Bullet("Assets/bullet16.jpg", self.x, self.y, target_coord[0], target_coord[1])
 
 
 class Tank(pygame.sprite.Sprite):
@@ -63,8 +81,10 @@ class Bullet(pygame.sprite.Sprite):
 
     def __str__(self):
         return "Location: " + str(self.x) + ", " + str(self.y) + "\n" \
-                     "Target: " + str(self.target_x) + ", " + str(self.target_y) + "\n" \
-                     "Vector (X, Y, Magnitude): " + str(self.displaceVector) + ", " + str(self.displaceVectorMagnitude)
+                                                                 "Target: " + str(self.target_x) + ", " + str(
+            self.target_y) + "\n" \
+                             "Vector (X, Y, Magnitude): " + str(self.displaceVector) + ", " + str(
+            self.displaceVectorMagnitude)
 
 
 class RocketBullet(Bullet):
