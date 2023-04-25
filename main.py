@@ -14,7 +14,7 @@ running = True
 dt = .01
 gameState = 0
 Title_Font = pygame.font.Font('freesansbold.ttf', 64)
-hud = mys.Hud(gameWindow, windowSize)
+hud = mys.Hud(gameWindow, windowSize, titleFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf")
 
 # Sprite
 
@@ -51,7 +51,7 @@ def main():
 
         gameWindow.fill("black")
 
-        hud.main_menu("Wii Play Retro", "orange")
+        hud.main_menu("Wii Play Retro", "orange", y_offset=-100)
 
         pygame.display.flip()
 
@@ -63,8 +63,10 @@ def main():
         if keys[pygame.K_SPACE]:
             player.shoot(pygame.mouse.get_pos(), BulletGroup)
         gameWindow.fill("white")
+        hud.score = len(BulletGroup)
+        hud.game_info()
         update()
-        clock.tick(60)
+    clock.tick(60)
 
 
 def update():

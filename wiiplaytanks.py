@@ -39,6 +39,12 @@ class Hud:
         titleTextRect.center = self.windowSize[0]/2+x_offset, self.windowSize[1]/2+y_offset
         self.gameWindow.blit(titleText, titleTextRect)
 
+    def game_info(self, scoreLocation=0, levelLocation=0, livesLocation=0):
+        scoreString = f"Score: {self.score}"
+        scoreText = self.mainFont.render(scoreString, True, "red")
+        scoreTextRect = scoreText.get_rect()
+        scoreTextRect.topleft = 8, 8
+        self.gameWindow.blit(scoreText, scoreTextRect)
 
 class Tank(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
