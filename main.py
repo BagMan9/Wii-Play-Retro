@@ -1,7 +1,6 @@
 import sys
 import pygame
 
-import objects as mys
 
 # Initialization
 pygame.init()

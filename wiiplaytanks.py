@@ -4,6 +4,11 @@ import math
 
 # Wii Play Tank Objects
 
+class SpriteSheet(object):
+
+    def __init__(self, filename):
+        self.sheet = pygame.image.load(filename).convert()
+
 
 class Tank(pygame.sprite.Sprite):
     def __init__(self, x, y, image, speed, direction):
