@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.x = x
         self.y = y
-        self.image = pygame.transform.scale((pygame.transform.rotate(image, 270)), (300, 100))
+        self.image = pygame.transform.scale((pygame.transform.rotate(image, 270)), (100, 100))
         self.rect = image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
@@ -55,7 +55,7 @@ class Tank(pygame.sprite.Sprite):
         return self.x, self.y
 
     def shoot(self, target_coord):
-        Bullet("Assets/bullet16.jpg", self.x, self.y, target_coord[0], target_coord[1])
+        Bullet("Assets/bullet16.jpg", self.x+100, self.y+50, target_coord[0], target_coord[1])
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -77,8 +77,9 @@ class Bullet(pygame.sprite.Sprite):
         return self.x, self.y
 
     def update(self):
-        self.x += self.unitVector[0]
-        self.y += self.unitVector[1]
+        self.x += self.unitVector[0]*10
+        self.y += self.unitVector[1]*10
+        self.rect.center = self.x, self.y
 
     def __str__(self):
         return "Location: " + str(self.x) + ", " + str(self.y) + "\n" \
