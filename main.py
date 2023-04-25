@@ -13,14 +13,14 @@ dt = .01
 
 
 # Sprite Stuff
-
-tankSheet = mys.SpriteSheet("Assets/TanksSheet.png")
-player = mys.Player(300, 300, tankSheet.image_at((48, 895, 390, 1330)))
-
-# Sprite Groups
 TankGroup = pygame.sprite.Group()
 BulletGroup = pygame.sprite.Group()
 AllSprites = pygame.sprite.Group()
+
+tankSheet = mys.SpriteSheet("Assets/TanksSheet.png")
+
+player = mys.Player(300, 300, tankSheet.image_at((48, 895, 390, 1330)))
+
 AllSprites.add(player)
 
 
@@ -37,10 +37,9 @@ def main():
     if keys[pygame.K_s]:
         player.y += 300*dt
     if keys[pygame.K_SPACE]:
-        player.shoot(pygame.mouse.get_pos())
+        player.shoot(pygame.mouse.get_pos(), BulletGroup)
     gamewindow.fill("black")
     update()
-    gamewindow.blit(player.image, player.rect)
     clock.tick(60)
 
 

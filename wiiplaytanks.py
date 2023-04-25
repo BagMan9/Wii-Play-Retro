@@ -35,8 +35,9 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
-    def shoot(self, target_coord):
-        Bullet("Assets/bullet16.jpg", self.x, self.y, target_coord[0], target_coord[1])
+    def shoot(self, target_coord, group):
+        proj = Bullet("Assets/bullet16.jpg", self.x, self.y, target_coord[0], target_coord[1])
+        group.add(proj)
 
 
 class Tank(pygame.sprite.Sprite):
