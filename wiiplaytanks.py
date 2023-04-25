@@ -4,48 +4,6 @@ import math
 
 # Wii Play Tank Objects
 
-class SpriteSheet(object):
-
-    def __init__(self, filename):
-        self.sheet = pygame.image.load(filename).convert()
-
-    def image_at(self, rectangle, colorKey=None):
-        rect = pygame.Rect(rectangle)
-        image = pygame.Surface(rect.size).convert()
-        image.blit(self.sheet, (0, 0), rect)
-        if colorKey is not None:
-            if colorKey == -1:
-                colorKey = image.get_at((0, 0))
-            image.set_colorkey((colorKey, pygame.RLEACCEL))
-        return image
-
-
-class Hud:
-
-    def __init__(self, gameWindow, windowSize, titleFontFile='freesansbold.ttf', mainFontFile='freesansbold.ttf'):
-        self.score = 0
-        self.lives = 3
-        self.level = 1
-        self.gameWindow = gameWindow
-        self.windowSize = windowSize
-        self.titleSize = 64
-        self.mainSize = 24
-        self.titleFont = pygame.font.Font(titleFontFile, self.titleSize)
-        self.mainFont = pygame.font.Font(mainFontFile, self.mainSize)
-
-    def main_menu(self, text, color, x_offset=0, y_offset=0):
-        titleText = self.titleFont.render(text, True, color)
-        titleTextRect = titleText.get_rect()
-        titleTextRect.center = self.windowSize[0] / 2 + x_offset, self.windowSize[1] / 2 + y_offset
-        self.gameWindow.blit(titleText, titleTextRect)
-
-    def game_info(self, scoreLocation=0, levelLocation=0, livesLocation=0):
-        scoreString = f"Score: {self.score}"
-        scoreText = self.mainFont.render(scoreString, True, "red")
-        scoreTextRect = scoreText.get_rect()
-        scoreTextRect.topleft = 8, 8
-        self.gameWindow.blit(scoreText, scoreTextRect)
-
 
 class Tank(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
