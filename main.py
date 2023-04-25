@@ -5,12 +5,12 @@ import wiiplaytanks as mys
 
 # Initialization
 pygame.init()
-gamewindow = pygame.display.set_mode((1280, 720))
+gameWindow = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("WiiPlay Retro")
 clock = pygame.time.Clock()
 running = True
 dt = .01
-gamestate = 0
+gameState = 0
 Title_Font = pygame.font.Font('freesansbold.ttf', 64)
 
 # Sprite
@@ -30,7 +30,7 @@ AllSprites.add(player)
 
 
 def main():
-    global gamestate
+    global gameState
     # Quit Checking
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -42,27 +42,27 @@ def main():
     keys = pygame.key.get_pressed()
 
     # Title Screen
-    if gamestate == 0:
+    if gameState == 0:
         if keys[pygame.K_SPACE]:
-            gamestate = 1
+            gameState = 1
 
-        gamewindow.fill("black")
+        gameWindow.fill("black")
 
         Title_Text = Title_Font.render("Wii Play Retro", True, "orange")
         Title_Text_Rect = Title_Text.get_rect()
         Title_Text_Rect.center = 1280/2, 720/2
-        gamewindow.blit(Title_Text, Title_Text_Rect)
+        gameWindow.blit(Title_Text, Title_Text_Rect)
 
         pygame.display.flip()
 
-    if gamestate == 1:
+    if gameState == 1:
         if keys[pygame.K_w]:
             player.y -= 300*dt
         if keys[pygame.K_s]:
             player.y += 300*dt
         if keys[pygame.K_SPACE]:
             player.shoot(pygame.mouse.get_pos(), BulletGroup)
-        gamewindow.fill("white")
+        gameWindow.fill("white")
         update()
         clock.tick(60)
 
@@ -71,9 +71,9 @@ def update():
     TankGroup.update()
     BulletGroup.update()
     AllSprites.update()
-    TankGroup.draw(gamewindow)
-    BulletGroup.draw(gamewindow)
-    AllSprites.draw(gamewindow)
+    TankGroup.draw(gameWindow)
+    BulletGroup.draw(gameWindow)
+    AllSprites.draw(gameWindow)
     pygame.display.flip()
 
 
