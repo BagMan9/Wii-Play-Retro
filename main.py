@@ -3,6 +3,61 @@ import pygame
 import wiiplaytanks as mys
 
 
+def main():
+    global gameState
+    # Quit Checking
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            global running
+            running = False
+            pygame.quit()
+            sys.exit()
+    # Grabbing player input
+    keys = pygame.key.get_pressed()
+
+    # Title Screen
+    if gameState == 0:
+        if keys[pygame.K_SPACE]:
+            gameState = 1
+
+        gameWindow.fill("black")
+
+        hud.main_menu("Wii Play Retro", "orange", y_offset=-100)
+
+        pygame.display.flip()
+
+    if gameState == 1:
+        player_movement(player, keys)
+        gameWindow.fill("white")
+        hud.score = len(BulletGroup)
+        hud.game_info()
+        update()
+    clock.tick(60)
+
+
+def update():
+    TankGroup.update()
+    BulletGroup.update()
+    AllSprites.update()
+    TankGroup.draw(gameWindow)
+    BulletGroup.draw(gameWindow)
+    AllSprites.draw(gameWindow)
+    pygame.display.flip()
+
+
+def player_movement(sprite, keys):
+    if keys[pygame.K_w]:
+        sprite.y -= 300 * dt
+    if keys[pygame.K_s]:
+        sprite.y += 300 * dt
+    if keys[pygame.K_a]:
+        sprite.x -= 300 * dt
+    if keys[pygame.K_d]:
+        sprite.x += 300 * dt
+    if keys[pygame.K_SPACE]:
+        sprite.shoot(pygame.mouse.get_pos(), BulletGroup)
+
+
 class SpriteSheet(object):
 
     def __init__(self, filename):
@@ -56,7 +111,6 @@ clock = pygame.time.Clock()
 running = True
 dt = .01
 gameState = 0
-Title_Font = pygame.font.Font('freesansbold.ttf', 64)
 hud = Hud(gameWindow, windowSize, titleFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf")
 
 # Sprite
@@ -73,53 +127,6 @@ tankSheet = SpriteSheet("Assets/TanksSheet.png")
 # Player Spawn
 player = mys.Player(300, 300, tankSheet.image_at((60, 895, 330, 410)))
 AllSprites.add(player)
-
-
-def main():
-    global gameState
-    # Quit Checking
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            global running
-            running = False
-            pygame.quit()
-            sys.exit()
-    # Grabbing player input
-    keys = pygame.key.get_pressed()
-
-    # Title Screen
-    if gameState == 0:
-        if keys[pygame.K_SPACE]:
-            gameState = 1
-
-        gameWindow.fill("black")
-
-        hud.main_menu("Wii Play Retro", "orange", y_offset=-100)
-
-        pygame.display.flip()
-
-    if gameState == 1:
-        if keys[pygame.K_w]:
-            player.y -= 300*dt
-        if keys[pygame.K_s]:
-            player.y += 300*dt
-        if keys[pygame.K_SPACE]:
-            player.shoot(pygame.mouse.get_pos(), BulletGroup)
-        gameWindow.fill("white")
-        hud.score = len(BulletGroup)
-        hud.game_info()
-        update()
-    clock.tick(60)
-
-
-def update():
-    TankGroup.update()
-    BulletGroup.update()
-    AllSprites.update()
-    TankGroup.draw(gameWindow)
-    BulletGroup.draw(gameWindow)
-    AllSprites.draw(gameWindow)
-    pygame.display.flip()
 
 
 if __name__ == "__main__":
