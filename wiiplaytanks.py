@@ -30,16 +30,26 @@ class Tank(pygame.sprite.Sprite):
         self.rect.center = (x, y)
         self.x = x
         self.y = y
+        self.firing = False
+        self.firing_delay = 100
+        self.firing_time = 0
 
     def loc(self):
         return self.x, self.y
 
     def shoot(self, target_coord, group):
-        projectile = Bullet("Assets/bullet16.jpg", self.x+100, self.y+50, target_coord[0], target_coord[1])
-        group.add(projectile)
+        if self.firing:
+            pass
+        else:
+            self.firing_time = pygame.time.get_ticks()
+            self.firing = True
+            projectile = Bullet("Assets/bullet16.jpg", self.x+100, self.y+50, target_coord[0], target_coord[1])
+            group.add(projectile)
 
     def update(self):
         self.rect.center = self.x, self.y
+        if self.firing and pygame.time.get_ticks() - self.firing_time > self.firing_delay:
+            self.firing = False
 
 
 class Bullet(pygame.sprite.Sprite):
