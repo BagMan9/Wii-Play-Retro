@@ -1,5 +1,5 @@
 import pygame
-from basic import Direction
+from basic import VectorManagement
 
 
 # Wii Play Tank Objects
@@ -36,16 +36,18 @@ class Tank(pygame.sprite.Sprite):
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, target_x, target_y):
+    def __init__(self, image, x, y, target_x, target_y, velocityMultiplier=10):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
         self.originalImage = image
         self.target_x = target_x
         self.target_y = target_y
-        self.direction = Direction((self.x, self.y), (self.target_x, self.target_y))
+        self.velocityMultiplier = velocityMultiplier
+        self.direction = VectorManagement((self.x, self.y), (self.target_x, self.target_y))
         self.perTicDistance = self.direction.get_UnitVector()
-        self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
+        self.angle = self.direction.get_Angle()
+        self.image = pygame.transform.rotate(self.originalImage, self.angle)
         self.rect = self.image.get_rect()
         self.rect.center = self.x, self.y
 
@@ -53,8 +55,8 @@ class Bullet(pygame.sprite.Sprite):
         return self.x, self.y
 
     def update(self):
-        self.x += self.perTicDistance[0] * 10
-        self.y += self.perTicDistance[1] * 10
+        self.x += self.perTicDistance[0] * self.velocityMultiplier
+        self.y += self.perTicDistance[1] * self.velocityMultiplier
         if not 0 < self.x < 1280:
             self.perTicDistance[0] = self.direction.invertDirection('x')
             self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
