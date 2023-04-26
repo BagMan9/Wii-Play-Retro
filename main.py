@@ -1,6 +1,7 @@
 import sys
 import pygame
 import wiiplaytanks as mys
+from basic import SpriteSheet, Hud
 
 
 def main():
@@ -24,8 +25,6 @@ def main():
 
         hud.main_menu("Wii Play Retro", "orange", y_offset=-100)
 
-        pygame.display.flip()
-
     if gameState == 1:
         player_movement(player, keys)
         gameWindow.fill("white")
@@ -36,11 +35,7 @@ def main():
 
 
 def update():
-    TankGroup.update()
-    BulletGroup.update()
     AllSprites.update()
-    TankGroup.draw(gameWindow)
-    BulletGroup.draw(gameWindow)
     AllSprites.draw(gameWindow)
     pygame.display.flip()
 
@@ -55,50 +50,7 @@ def player_movement(sprite, keys):
     if keys[pygame.K_d]:
         sprite.x += 300 * dt
     if keys[pygame.K_SPACE]:
-        sprite.shoot(pygame.mouse.get_pos(), BulletGroup)
-
-
-class SpriteSheet(object):
-
-    def __init__(self, filename):
-        self.sheet = pygame.image.load(filename).convert()
-
-    def image_at(self, rectangle, colorKey=None):
-        rect = pygame.Rect(rectangle)
-        image = pygame.Surface(rect.size).convert()
-        image.blit(self.sheet, (0, 0), rect)
-        if colorKey is not None:
-            if colorKey == -1:
-                colorKey = image.get_at((0, 0))
-            image.set_colorkey((colorKey, pygame.RLEACCEL))
-        return image
-
-
-class Hud:
-
-    def __init__(self, GameWindow, WindowSize, titleFontFile='freesansbold.ttf', mainFontFile='freesansbold.ttf'):
-        self.score = 0
-        self.lives = 3
-        self.level = 1
-        self.gameWindow = GameWindow
-        self.windowSize = WindowSize
-        self.titleSize = 64
-        self.mainSize = 24
-        self.titleFont = pygame.font.Font(titleFontFile, self.titleSize)
-        self.mainFont = pygame.font.Font(mainFontFile, self.mainSize)
-
-    def main_menu(self, text, color, x_offset=0, y_offset=0):
-        titleText = self.titleFont.render(text, True, color)
-        titleTextRect = titleText.get_rect()
-        titleTextRect.center = self.windowSize[0] / 2 + x_offset, self.windowSize[1] / 2 + y_offset
-        self.gameWindow.blit(titleText, titleTextRect)
-
-    def game_info(self, scoreLocation=0, levelLocation=0, livesLocation=0):
-        scoreString = f"Score: {self.score}"
-        scoreText = self.mainFont.render(scoreString, True, "red")
-        scoreTextRect = scoreText.get_rect()
-        scoreTextRect.topleft = 8, 8
-        self.gameWindow.blit(scoreText, scoreTextRect)
+        sprite.bulletShoot(tankSheet.image_at((414, 419, 17, 66), -1), pygame.mouse.get_pos(), BulletGroup, AllSprites)
 
 
 # Initialization
@@ -125,7 +77,7 @@ AllSprites = pygame.sprite.Group()
 tankSheet = SpriteSheet("Assets/TanksSheet.png")
 
 # Player Spawn
-player = mys.Player(300, 300, tankSheet.image_at((60, 895, 330, 410)))
+player = mys.Player(300, 300, tankSheet.image_at((647, 928, 333, 375), colorKey=-1))
 AllSprites.add(player)
 
 
