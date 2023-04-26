@@ -40,14 +40,14 @@ class Bullet(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
+        self.originalImage = image
         self.target_x = target_x
         self.target_y = target_y
         self.direction = Direction((self.x, self.y), (self.target_x, self.target_y))
         self.perTicDistance = self.direction.get_UnitVector()
-        self.image = pygame.transform.rotate(image, self.direction.get_Angle())
+        self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
         self.rect = self.image.get_rect()
         self.rect.center = self.x, self.y
-        print(self.direction.get_Angle())
 
     def loc(self):
         return self.x, self.y
@@ -56,9 +56,13 @@ class Bullet(pygame.sprite.Sprite):
         self.x += self.perTicDistance[0] * 10
         self.y += self.perTicDistance[1] * 10
         if not 0 < self.x < 1280:
-            self.perTicDistance[0] = -self.perTicDistance[0]
+            self.perTicDistance[0] = self.direction.invertDirection('x')
+            self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
+            self.rect = self.image.get_rect()
         if not 0 < self.y < 720:
-            self.perTicDistance[1] = -self.perTicDistance[1]
+            self.perTicDistance[1] = self.direction.invertDirection('y')
+            self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
+            self.rect = self.image.get_rect()
         self.rect.center = self.x, self.y
 
 

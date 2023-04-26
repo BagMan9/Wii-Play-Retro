@@ -56,14 +56,33 @@ class Direction:
                                                          ((self.target[1] - self.origin[1]) ** 2)))
         self.unitVector = [self.displacementVector[0] / self.displacementVectorMagnitude,
                            self.displacementVector[1] / self.displacementVectorMagnitude]
-        self.angleRadians = math.atan2(-self.displacementVector[1], self.displacementVector[0])
-        self.angleDegrees = self.angleRadians*(180/math.pi)
+        self.angle = angleFinder(self.unitVector)
 
     def get_UnitVector(self):
         return self.unitVector
 
     def get_Angle(self, units='degree'):
         if units == 'degree':
-            return self.angleDegrees - 90
+            return self.angle
         if units == 'radian':
-            return self.angleRadians
+            return angleFinder(self.unitVector, 'radian')
+
+    def invertDirection(self, axis):
+        if axis.lower() == 'x':
+            self.unitVector[0] = -self.unitVector[0]
+            self.angle = angleFinder(self.unitVector)
+            return self.unitVector[0]
+        if axis.lower() == 'y':
+            self.unitVector[1] = -self.unitVector[1]
+            self.angle = angleFinder(self.unitVector)
+            return self.unitVector[1]
+
+
+def angleFinder(vector, units='degree'):
+    radians = math.atan2(-vector[1], vector[0])
+    degrees = radians*(180/math.pi) - 90
+    if units == 'degree':
+        return degrees
+    if units == 'radian':
+        return radians
+
