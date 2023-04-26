@@ -47,13 +47,11 @@ class Hud:
         self.gameWindow.blit(scoreText, scoreTextRect)
 
 
-class Direction:
+class VectorManagement:
     def __init__(self, originCoords, targetCoords):
-        self.origin = originCoords
-        self.target = targetCoords
-        self.displacementVector = self.target[0] - self.origin[0], self.target[1] - self.origin[1]
-        self.displacementVectorMagnitude = abs(math.sqrt(((self.target[0] - self.origin[0]) ** 2) +
-                                                         ((self.target[1] - self.origin[1]) ** 2)))
+        self.displacementVector = targetCoords[0] - originCoords[0], targetCoords[1] - originCoords[1]
+        self.displacementVectorMagnitude = abs(math.sqrt(((targetCoords[0] - originCoords[0]) ** 2) +
+                                                         ((targetCoords[1] - originCoords[1]) ** 2)))
         self.unitVector = [self.displacementVector[0] / self.displacementVectorMagnitude,
                            self.displacementVector[1] / self.displacementVectorMagnitude]
         self.angle = angleFinder(self.unitVector)
@@ -78,11 +76,10 @@ class Direction:
             return self.unitVector[1]
 
 
-def angleFinder(vector, units='degree'):
+def angleFinder(vector, units='degree'):  # ONLY USE WITH LEFT HAND COORDS
     radians = math.atan2(-vector[1], vector[0])
     degrees = radians*(180/math.pi) - 90
     if units == 'degree':
         return degrees
     if units == 'radian':
         return radians
-
