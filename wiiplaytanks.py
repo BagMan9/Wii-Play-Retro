@@ -5,19 +5,19 @@ from basic import VectorManagement
 # Wii Play Tank Objects
 
 class Tank(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, gunImage):
+    def __init__(self, x, y, image, gunImage, allGroup):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.rotate(image, 270)
         self.rect = self.image.get_rect()
         self.gunImage = gunImage
-        self.gunRect = self.gunImage.get_rect()
         self.rect.center = (x, y)
-        self.gunRect.center = (x, y)
         self.x = x
         self.y = y
         self.firing = False
         self.firing_delay = 200
         self.firing_time = 0
+        self.tankTurret = Turret(self, gunImage)
+        allGroup.add(self.tankTurret)
 
     def loc(self):
         return self.x, self.y
@@ -76,16 +76,26 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.center = self.x, self.y
 
 
+class Turret(pygame.sprite.Sprite):
+    def __init__(self, parentTank, image):
+        pygame.sprite.Sprite.__init__(self)
+        self.parentTank = parentTank
+        self.OGImage = image
+        self.x = self.parentTank.loc()[0]
+        self.y = self.parentTank.loc()[1]
+        self.aimVector = VectorManagement((self.x, self.y), pygame.mouse.get_pos())
+        self.image = pygame.transform.rotate(self.OGImage, self.aimVector.get_Angle())
+        self.rect = self.image.get_rect()
+        self.rect.center = self.x, self.y
+
+    def update(self):
+        pass
+
 class Player(Tank):
-    def __init__(self, x, y, image, gunImage):
-        super().__init__(x, y, image, gunImage)
+    def __init__(self, x, y, image, gunImage, allGroup):
+        super().__init__(x, y, image, gunImage, allGroup)
 
 
 class Enemy(Tank):
     def __init__(self, x, y, image, gunImage):
         super().__init__(x, y, image, gunImage)
-
-
-class RocketBullet(Bullet):
-    def __init__(self, image, x, y, target_x, target_y):
-        super().__init__(image, x, y, target_x, target_y)

@@ -25,13 +25,11 @@ AllSprites = pygame.sprite.Group()
 
 tankSheet = SpriteSheet("Assets/TanksSheet.png")
 player = mys.Player(300, 300, tankSheet.image_at((647, 928, 333, 375), 25),
-                    tankSheet.image_at((1090, 884, 157, 328)))
+                    tankSheet.image_at((1090, 884, 157, 328), 25), AllSprites)
 bulletSprite = tankSheet.image_at((414, 419, 17, 66), 50)
-enemy = mys.Enemy(600, 300, tankSheet.image_at((647, 928, 333, 375), 25), tankSheet.image_at((1090, 884, 157, 328)))
+# enemy = mys.Enemy(600, 300, tankSheet.image_at((647, 928, 333, 375), 25), tankSheet.image_at((1090, 884, 157, 328)))
 AllSprites.add(player)
-AllSprites.add(enemy)
 TankGroup.add(player)
-TankGroup.add(enemy)
 
 
 def main():
