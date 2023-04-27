@@ -30,7 +30,11 @@ tankSheet = SpriteSheet("Assets/TanksSheet.png")
 player = mys.Player(300, 300, tankSheet.image_at((647, 928, 333, 375), 25),
                     tankSheet.image_at((1090, 884, 157, 328)))
 bulletSprite = tankSheet.image_at((414, 419, 17, 66), 50)
+enemy = mys.Enemy(600, 300, tankSheet.image_at((647, 928, 333, 375), 25), tankSheet.image_at((1090, 884, 157, 328)))
 AllSprites.add(player)
+AllSprites.add(enemy)
+TankGroup.add(player)
+TankGroup.add(enemy)
 
 
 def main():
@@ -51,6 +55,7 @@ def main():
 
     if gameState == 1:
         player_movement(player, keys)
+        pygame.sprite.groupcollide(BulletGroup, TankGroup, True, True)
         gameWindow.fill("white")
         hud.score = len(BulletGroup)
         hud.game_info()
@@ -64,7 +69,6 @@ def title_screen(keys):
         gameState = 1
 
     gameWindow.fill("black")
-
     hud.main_menu("Wii Play Retro", "orange", y_offset=-100)
 
 

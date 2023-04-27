@@ -76,7 +76,6 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.center = self.x, self.y
 
 
-
 class Player(Tank):
     def __init__(self, x, y, image, gunImage):
         super().__init__(x, y, image, gunImage)
