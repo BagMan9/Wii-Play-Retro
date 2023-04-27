@@ -7,7 +7,7 @@ class SpriteSheet(object):
     def __init__(self, filename):
         self.sheet = pygame.image.load(filename).convert()
 
-    def image_at(self, rectangle, colorKey=None):
+    def image_at(self, rectangle, colorKey=-1):
         rect = pygame.Rect(rectangle)
         image = pygame.Surface(rect.size).convert()
         image.blit(self.sheet, (0, 0), rect)
@@ -49,21 +49,9 @@ class Hud:
 
 class VectorManagement:
     def __init__(self, originCoords, targetCoords):
-        self.displacementVector = targetCoords[0] - originCoords[0], targetCoords[1] - originCoords[1]
-        self.displacementVectorMagnitude = abs(math.sqrt(((targetCoords[0] - originCoords[0]) ** 2) +
-                                                         ((targetCoords[1] - originCoords[1]) ** 2)))
-        self.unitVector = [self.displacementVector[0] / self.displacementVectorMagnitude,
-                           self.displacementVector[1] / self.displacementVectorMagnitude]
+        self.unitVector = pygame.math.Vector2(targetCoords[0] - originCoords[0],
+                                              targetCoords[1] - originCoords[1]).normalize()
         self.angle = angleFinder(self.unitVector)
-
-    def get_UnitVector(self):
-        return self.unitVector
-
-    def get_Angle(self, units='degree'):
-        if units == 'degree':
-            return self.angle
-        if units == 'radian':
-            return angleFinder(self.unitVector, 'radian')
 
     def invertDirection(self, axis):
         if axis.lower() == 'x':
@@ -74,6 +62,20 @@ class VectorManagement:
             self.unitVector[1] = -self.unitVector[1]
             self.angle = angleFinder(self.unitVector)
             return self.unitVector[1]
+
+    def updateTarget(self, originCoords, targetCoords):
+        self.unitVector = pygame.math.Vector2(targetCoords[0] - originCoords[0],
+                                              targetCoords[1] - originCoords[1]).normalize()
+        self.angle = angleFinder(self.unitVector)
+
+    def get_UnitVector(self):
+        return self.unitVector
+
+    def get_Angle(self, units='degree'):
+        if units == 'degree':
+            return self.angle
+        if units == 'radian':
+            return angleFinder(self.unitVector, 'radian')
 
 
 def angleFinder(vector, units='degree'):  # ONLY USE WITH LEFT HAND COORDS

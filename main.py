@@ -4,6 +4,34 @@ import wiiplaytanks as mys
 from basic import SpriteSheet, Hud
 
 
+# Initialization
+pygame.init()
+verticalResolution = 720
+windowSize = verticalResolution * (16 / 9), verticalResolution
+gameWindow = pygame.display.set_mode(windowSize)
+pygame.display.set_caption("WiiPlay Retro")
+clock = pygame.time.Clock()
+running = True
+dt = .01
+gameState = 0
+hud = Hud(gameWindow, windowSize, titleFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf")
+
+# Sprite
+
+# Sprite Groups
+TankGroup = pygame.sprite.Group()
+BulletGroup = pygame.sprite.Group()
+AllSprites = pygame.sprite.Group()
+
+# Sprite + Images
+
+tankSheet = SpriteSheet("Assets/TanksSheet.png")
+player = mys.Player(300, 300, tankSheet.image_at((647, 928, 333, 375)),
+                    tankSheet.image_at((1090, 884, 157, 328)))
+bulletSprite = pygame.transform.scale(tankSheet.image_at((414, 419, 17, 66)), (5, 19.4))
+AllSprites.add(player)
+
+
 def main():
     global gameState
     # Quit Checking
@@ -50,35 +78,7 @@ def player_movement(sprite, keys):
     if keys[pygame.K_d]:
         sprite.x += 300 * dt
     if keys[pygame.K_SPACE]:
-        sprite.bulletShoot(tankSheet.image_at((414, 419, 17, 66), -1), pygame.mouse.get_pos(), BulletGroup, AllSprites)
-
-
-# Initialization
-pygame.init()
-verticalResolution = 720
-windowSize = verticalResolution * (16 / 9), verticalResolution
-gameWindow = pygame.display.set_mode(windowSize)
-pygame.display.set_caption("WiiPlay Retro")
-clock = pygame.time.Clock()
-running = True
-dt = .01
-gameState = 0
-hud = Hud(gameWindow, windowSize, titleFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf")
-
-# Sprite
-
-# Sprite Groups
-TankGroup = pygame.sprite.Group()
-BulletGroup = pygame.sprite.Group()
-AllSprites = pygame.sprite.Group()
-
-# Sprite Sheets
-
-tankSheet = SpriteSheet("Assets/TanksSheet.png")
-
-# Player Spawn
-player = mys.Player(300, 300, tankSheet.image_at((647, 928, 333, 375), colorKey=-1))
-AllSprites.add(player)
+        sprite.bulletShoot(bulletSprite, pygame.mouse.get_pos(), BulletGroup, AllSprites)
 
 
 if __name__ == "__main__":

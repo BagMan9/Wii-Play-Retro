@@ -5,11 +5,14 @@ from basic import VectorManagement
 # Wii Play Tank Objects
 
 class Tank(pygame.sprite.Sprite):
-    def __init__(self, x, y, image):
+    def __init__(self, x, y, image, gunImage):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.scale((pygame.transform.rotate(image, 270)), (100, 112.6))
         self.rect = self.image.get_rect()
+        self.gunImage = gunImage
+        self.gunRect = self.gunImage.get_rect()
         self.rect.center = (x, y)
+        self.gunRect.center = (x, y)
         self.x = x
         self.y = y
         self.firing = False
@@ -69,20 +72,15 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Player(Tank):
-    def __init__(self, x, y, image):
-        super().__init__(x, y, image)
+    def __init__(self, x, y, image, gunImage):
+        super().__init__(x, y, image, gunImage)
 
 
 class Enemy(Tank):
-    def __init__(self, x, y, image):
-        super().__init__(x, y, image)
+    def __init__(self, x, y, image, gunImage):
+        super().__init__(x, y, image, gunImage)
 
 
 class RocketBullet(Bullet):
     def __init__(self, image, x, y, target_x, target_y):
         super().__init__(image, x, y, target_x, target_y)
-
-
-class SilverTank(Tank):
-    def __init__(self, x, y, image):
-        super().__init__(x, y, image)
