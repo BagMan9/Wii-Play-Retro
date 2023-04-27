@@ -7,7 +7,8 @@ from basic import SpriteSheet, Hud
 # Initialization
 pygame.init()
 verticalResolution = 720
-windowSize = verticalResolution * (16 / 9), verticalResolution
+aspectRatio = 16 / 9
+windowSize = verticalResolution * aspectRatio, verticalResolution
 gameWindow = pygame.display.set_mode(windowSize)
 pygame.display.set_caption("WiiPlay Retro")
 clock = pygame.time.Clock()
@@ -26,9 +27,9 @@ AllSprites = pygame.sprite.Group()
 # Sprite + Images
 
 tankSheet = SpriteSheet("Assets/TanksSheet.png")
-player = mys.Player(300, 300, tankSheet.image_at((647, 928, 333, 375)),
+player = mys.Player(300, 300, tankSheet.image_at((647, 928, 333, 375), 25),
                     tankSheet.image_at((1090, 884, 157, 328)))
-bulletSprite = pygame.transform.scale(tankSheet.image_at((414, 419, 17, 66)), (5, 19.4))
+bulletSprite = tankSheet.image_at((414, 419, 17, 66), 50)
 AllSprites.add(player)
 
 
@@ -46,12 +47,7 @@ def main():
 
     # Title Screen
     if gameState == 0:
-        if keys[pygame.K_SPACE]:
-            gameState = 1
-
-        gameWindow.fill("black")
-
-        hud.main_menu("Wii Play Retro", "orange", y_offset=-100)
+        title_screen(keys)
 
     if gameState == 1:
         player_movement(player, keys)
@@ -60,6 +56,16 @@ def main():
         hud.game_info()
         update()
     clock.tick(60)
+
+
+def title_screen(keys):
+    global gameState
+    if keys[pygame.K_SPACE]:
+        gameState = 1
+
+    gameWindow.fill("black")
+
+    hud.main_menu("Wii Play Retro", "orange", y_offset=-100)
 
 
 def update():
