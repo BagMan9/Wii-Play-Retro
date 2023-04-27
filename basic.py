@@ -7,7 +7,8 @@ class SpriteSheet(object):
     def __init__(self, filename):
         self.sheet = pygame.image.load(filename).convert()
 
-    def image_at(self, rectangle, colorKey=-1):
+    def image_at(self, rectangle, scalePercent=100, colorKey=-1):
+        scaleAmount = scalePercent / 100
         rect = pygame.Rect(rectangle)
         image = pygame.Surface(rect.size).convert()
         image.blit(self.sheet, (0, 0), rect)
@@ -16,6 +17,8 @@ class SpriteSheet(object):
             if colorKey == -1:
                 colorKey = image.get_at((0, 0))
             image.set_colorkey(colorKey, pygame.RLEACCEL)
+        if scaleAmount != 1:
+            image = pygame.transform.scale(image, (rectangle[2]*scaleAmount, rectangle[3]*scaleAmount))
         return image
 
 
