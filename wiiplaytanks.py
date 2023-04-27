@@ -7,7 +7,7 @@ from basic import VectorManagement
 class Tank(pygame.sprite.Sprite):
     def __init__(self, x, y, image, gunImage):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale((pygame.transform.rotate(image, 270)), (100, 112.6))
+        self.image = pygame.transform.rotate(image, 270)
         self.rect = self.image.get_rect()
         self.gunImage = gunImage
         self.gunRect = self.gunImage.get_rect()
@@ -53,6 +53,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.originalImage, self.angle)
         self.rect = self.image.get_rect()
         self.rect.center = self.x, self.y
+        self.bounceCount = 0
 
     def loc(self):
         return self.x, self.y
@@ -64,11 +65,16 @@ class Bullet(pygame.sprite.Sprite):
             self.perTicDistance[0] = self.direction.invertDirection('x')
             self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
             self.rect = self.image.get_rect()
+            self.bounceCount += 1
         if not 0 < self.y < 720:
             self.perTicDistance[1] = self.direction.invertDirection('y')
             self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
             self.rect = self.image.get_rect()
+            self.bounceCount += 1
+        if self.bounceCount >= 3:
+            self.kill()
         self.rect.center = self.x, self.y
+
 
 
 class Player(Tank):
