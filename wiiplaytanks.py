@@ -5,7 +5,7 @@ from basic import VectorManagement
 # Wii Play Tank Objects
 
 class Tank(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, gunImage, allGroup):
+    def __init__(self, x, y, image, gunImage, tankGroup):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.rotate(image, 270)
         self.rect = self.image.get_rect()
@@ -17,7 +17,7 @@ class Tank(pygame.sprite.Sprite):
         self.firing_delay = 200
         self.firing_time = 0
         self.tankTurret = Turret(self, gunImage)
-        allGroup.add(self.tankTurret)
+        tankGroup.add(self.tankTurret)
 
     def loc(self):
         return self.x, self.y
@@ -81,21 +81,21 @@ class Turret(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.parentTank = parentTank
         self.OGImage = image
-        self.x = self.parentTank.loc()[0]
-        self.y = self.parentTank.loc()[1]
+        self.x = self.parentTank.loc()[0] + 41.5
+        self.y = self.parentTank.loc()[1] + 47
         self.aimVector = VectorManagement((self.x, self.y), pygame.mouse.get_pos())
         self.image = pygame.transform.rotate(self.OGImage, self.aimVector.get_Angle())
         self.rect = self.image.get_rect()
         self.rect.center = self.x, self.y
 
     def update(self):
-        pass
+        self.x = self.parentTank.loc()[0] + 21.5
+        self.y = self.parentTank.loc()[1] + 23
+        self.aimVector = VectorManagement((self.x, self.y), pygame.mouse.get_pos())
+        self.image = pygame.transform.rotate(self.OGImage, self.aimVector.get_Angle())
+        self.rect.center = self.x, self.y
+
 
 class Player(Tank):
     def __init__(self, x, y, image, gunImage, allGroup):
         super().__init__(x, y, image, gunImage, allGroup)
-
-
-class Enemy(Tank):
-    def __init__(self, x, y, image, gunImage):
-        super().__init__(x, y, image, gunImage)
