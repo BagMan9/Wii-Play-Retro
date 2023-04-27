@@ -17,14 +17,11 @@ dt = .01
 gameState = 0
 hud = Hud(gameWindow, windowSize, titleFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf")
 
-# Sprite
-
 # Sprite Groups
 TankGroup = pygame.sprite.Group()
 BulletGroup = pygame.sprite.Group()
 AllSprites = pygame.sprite.Group()
 
-# Sprite + Images
 
 tankSheet = SpriteSheet("Assets/TanksSheet.png")
 player = mys.Player(300, 300, tankSheet.image_at((647, 928, 333, 375), 25),
@@ -88,7 +85,8 @@ def player_movement(sprite, keys):
     if keys[pygame.K_d]:
         sprite.x += 300 * dt
     if keys[pygame.K_SPACE]:
-        sprite.bulletShoot(bulletSprite, pygame.mouse.get_pos(), BulletGroup, AllSprites)
+        if len(BulletGroup) <= 2:
+            sprite.bulletShoot(bulletSprite, pygame.mouse.get_pos(), BulletGroup, AllSprites)
 
 
 if __name__ == "__main__":
