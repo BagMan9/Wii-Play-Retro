@@ -81,8 +81,8 @@ class Turret(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.parentTank = parentTank
         self.OGImage = image
-        self.x = self.parentTank.loc()[0] + 21
-        self.y = self.parentTank.loc()[1] + 23
+        self.x = self.parentTank.loc()[0] - 3
+        self.y = self.parentTank.loc()[1]
         self.invertVector = 0, 0
         self.aimVector = VectorManagement((self.x, self.y), pygame.mouse.get_pos())
         self.image = pygame.transform.rotate(self.OGImage, self.aimVector.get_Angle())
@@ -90,7 +90,7 @@ class Turret(pygame.sprite.Sprite):
         self.rect.center = self.x, self.y
 
     def update(self):
-        self.x = self.parentTank.loc()[0]
+        self.x = self.parentTank.loc()[0] - 3
         self.y = self.parentTank.loc()[1]
         mouse = pygame.mouse.get_pos()
         self.aimVector = VectorManagement((self.x, self.y), mouse)
