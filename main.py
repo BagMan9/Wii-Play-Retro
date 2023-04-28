@@ -1,4 +1,4 @@
-import sys
+from sys import exit
 
 import pygame
 
@@ -36,7 +36,7 @@ TankGroup.move_to_back(player)
 
 
 # noinspection PyUnboundLocalVariable
-def main():
+def main() -> None:
     global running
     while running:
         global gameState
@@ -45,7 +45,7 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
-                sys.exit()
+                exit()
         # Grabbing player input
         keys = pygame.key.get_pressed()
 
@@ -63,7 +63,7 @@ def main():
         clock.tick(60)
 
 
-def title_screen(keys):
+def title_screen(keys) -> None:
     global gameState
     if keys[pygame.K_SPACE]:
         gameState = 1
@@ -72,7 +72,7 @@ def title_screen(keys):
     hud.main_menu("Wii Play Retro", "orange", y_offset=-100)
 
 
-def update():
+def update() -> None:
     TankGroup.update()
     TankGroup.draw(gameWindow)
     AllSprites.update()
@@ -80,7 +80,7 @@ def update():
     pygame.display.flip()
 
 
-def player_movement(sprite, keys):
+def player_movement(sprite: mys.Player, keys) -> None:
     moveAmount = 300
     if keys[pygame.K_w]:
         sprite.y -= moveAmount * dt

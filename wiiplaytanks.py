@@ -6,7 +6,7 @@ from basic import VectorManagement
 # Wii Play Tank Objects
 
 class Tank(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, gunImage, tankGroup):
+    def __init__(self, x, y, image, gunImage, tankGroup) -> None:
         """
         TODO: Make image rotation reflect player movement
         :param x: X-Axis
@@ -32,10 +32,18 @@ class Tank(pygame.sprite.Sprite):
         self.tankTurret = Turret(self, gunImage)
         tankGroup.add(self.tankTurret)
 
-    def loc(self):
+    def loc(self) -> tuple:
         return self.x, self.y
 
-    def bulletShoot(self, image, bulletGroup, allGroup):
+    def bulletShoot(self, image, bulletGroup, allGroup) -> None:
+        """
+        :param image:
+        :type image: pygame.surface.Surface
+        :param bulletGroup:
+        :type bulletGroup: pygame.sprite.Group
+        :param allGroup:
+        :type allGroup: pygame.sprite.Group
+        """
         if self.firing:
             pass
         else:
@@ -43,14 +51,25 @@ class Tank(pygame.sprite.Sprite):
             self.firing = True
             self.tankTurret.bullet(image, bulletGroup, allGroup)
 
-    def update(self):
+    def update(self) -> None:
         self.rect.center = self.x, self.y
         if self.firing and pygame.time.get_ticks() - self.firing_time > self.firing_delay:
             self.firing = False
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, vector, velocityMultiplier=10):
+    def __init__(self, image, x, y, vector, velocityMultiplier=10) -> None:
+        """
+        :param image: Sprite Image
+        :type image: pygame.surface.Surface
+        :param x: Spawn X-axis
+        :type x: int
+        :param y: Spawn Y-Axis
+        :type y: int
+        :param vector: Bullet Direction vector object
+        :param velocityMultiplier: Speed factor
+        :type velocityMultiplier: int
+        """
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
@@ -64,10 +83,10 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.center = self.x, self.y
         self.bounceCount = 0
 
-    def loc(self):
+    def loc(self) -> tuple:
         return self.x, self.y
 
-    def update(self):
+    def update(self) -> None:
         self.x += self.perTicDistance[0] * self.velocityMultiplier
         self.y += self.perTicDistance[1] * self.velocityMultiplier
         if not 0 < self.x < 1280:
@@ -86,7 +105,7 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Turret(pygame.sprite.Sprite):
-    def __init__(self, parentTank, image):
+    def __init__(self, parentTank: Tank, image: pygame.surface.Surface) -> None:
         pygame.sprite.Sprite.__init__(self)
         self.parentTank = parentTank
         self.OGImage = image
@@ -98,24 +117,53 @@ class Turret(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = self.x, self.y
 
-    def update(self):
+    def update(self) -> None:
         self.x = self.parentTank.loc()[0] - 3
         self.y = self.parentTank.loc()[1]
         mouse = pygame.mouse.get_pos()
         self.aimVector = VectorManagement((self.x, self.y), mouse)
-        self.invertVector = self.aimVector.get_UnitVector()[0] * 19, self.aimVector.get_UnitVector()[1] * 19
+
+        lengthFactor = 19
+        self.invertVector = self.aimVector.get_UnitVector()[0] * lengthFactor, \
+            self.aimVector.get_UnitVector()[1] * lengthFactor
+
         self.aimVector = VectorManagement((self.x + self.invertVector[0], self.y + self.invertVector[1]), mouse)
         self.image = pygame.transform.rotate(self.OGImage, self.aimVector.get_Angle())
         self.rect = self.image.get_rect()
         self.rect.center = self.x + self.invertVector[0], self.y + self.invertVector[1]
 
-    def bullet(self, image, bulletGroup, allGroup):
+    def bullet(self, image, bulletGroup=None, allGroup=None) -> None:
+        """
+        :param image: Sprite Image
+        :type image: pygame.surface.Surface
+        :param bulletGroup: Sprite Group (for projectiles)
+        :param allGroup: All Sprite Group
+        """
         projectile = Bullet(image, self.rect.center[0] + self.invertVector[0] * 2,
                             self.rect.center[1] + self.invertVector[1] * 2, self.aimVector)
-        bulletGroup.add(projectile)
-        allGroup.add(projectile)
+        if bulletGroup is not None:
+            bulletGroup.add(projectile)
+        if allGroup is not None:
+            allGroup.add(projectile)
 
 
 class Player(Tank):
-    def __init__(self, x, y, image, gunImage, allGroup):
+    def __init__(self, x, y, image, gunImage, allGroup) -> None:
         super().__init__(x, y, image, gunImage, allGroup)
+
+
+class Bomb(pygame.sprite.Sprite):
+    def __init__(self, image, coords) -> None:
+        """
+
+        :param image: Bomb Image
+        :type image: pygame.surface.Surface
+        :param coords: X Y position
+        :type coords: tuple
+        """
+        pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        self.x = coords[0]
+        self.y = coords[1]
+        self.rect = self.image.get_rect()
+        self.rect.center = self.x, self.y
