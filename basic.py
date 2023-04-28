@@ -52,8 +52,11 @@ class Hud:
 
 class VectorManagement:
     def __init__(self, originCoords, targetCoords):
-        self.unitVector = pygame.math.Vector2(targetCoords[0] - originCoords[0],
+        try:
+            self.unitVector = pygame.math.Vector2(targetCoords[0] - originCoords[0],
                                               targetCoords[1] - originCoords[1]).normalize()
+        except ValueError:
+            self.unitVector = 1, 1
         self.angle = angleFinder(self.unitVector)
 
     def invertDirection(self, axis):

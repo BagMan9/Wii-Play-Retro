@@ -17,21 +17,21 @@ dt = .01
 gameState = 0
 hud = Hud(gameWindow, windowSize, titleFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf")
 
-# Sprite Groups
-TankGroup = pygame.sprite.Group()
+# Sprite Vars
+tankSheet = SpriteSheet("Assets/TanksSheet.png")
+
+TankGroup = pygame.sprite.LayeredUpdates()
 BulletGroup = pygame.sprite.Group()
 AllSprites = pygame.sprite.Group()
 
+playerTankBaseImg = tankSheet.image_at((647, 928, 333, 375), 20)
+playerTankTurretImg = tankSheet.image_at((1092, 884, 159, 328), 20)
+bulletSpriteImg = tankSheet.image_at((414, 419, 17, 66), 40)
+testImg = pygame.transform.scale(pygame.image.load("Assets/testimg.png"), (159*.25, 328*.25))
 
-tankSheet = SpriteSheet("Assets/TanksSheet.png")
-player = mys.Player(300, 300, tankSheet.image_at((647, 928, 333, 375), 25),
-                    tankSheet.image_at((1090, 884, 157, 328)))
-bulletSprite = tankSheet.image_at((414, 419, 17, 66), 50)
-enemy = mys.Enemy(600, 300, tankSheet.image_at((647, 928, 333, 375), 25), tankSheet.image_at((1090, 884, 157, 328)))
-AllSprites.add(player)
-AllSprites.add(enemy)
+player = mys.Player(300, 300, playerTankBaseImg, playerTankTurretImg, TankGroup)
 TankGroup.add(player)
-TankGroup.add(enemy)
+TankGroup.move_to_back(player)
 
 
 def main():
@@ -52,7 +52,7 @@ def main():
 
     if gameState == 1:
         player_movement(player, keys)
-        pygame.sprite.groupcollide(BulletGroup, TankGroup, True, True)
+        # pygame.sprite.groupcollide(BulletGroup, TankGroup, True, True)
         gameWindow.fill("white")
         hud.score = len(BulletGroup)
         hud.game_info()
@@ -70,6 +70,8 @@ def title_screen(keys):
 
 
 def update():
+    TankGroup.update()
+    TankGroup.draw(gameWindow)
     AllSprites.update()
     AllSprites.draw(gameWindow)
     pygame.display.flip()
@@ -86,7 +88,7 @@ def player_movement(sprite, keys):
         sprite.x += 300 * dt
     if keys[pygame.K_SPACE]:
         if len(BulletGroup) <= 2:
-            sprite.bulletShoot(bulletSprite, pygame.mouse.get_pos(), BulletGroup, AllSprites)
+            sprite.bulletShoot(bulletSpriteImg, BulletGroup, AllSprites)
 
 
 if __name__ == "__main__":
