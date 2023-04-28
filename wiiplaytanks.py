@@ -6,6 +6,10 @@ from basic import VectorManagement
 
 class Tank(pygame.sprite.Sprite):
     def __init__(self, x, y, image, gunImage, tankGroup):
+        """
+        TODO: Move image rotation outside class
+        TODO: Make image rotation reflect player movement
+        """
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.rotate(image, 270)
         self.rect = self.image.get_rect()
@@ -81,7 +85,7 @@ class Turret(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.parentTank = parentTank
         self.OGImage = image
-        self.x = self.parentTank.loc()[0] + 21.5
+        self.x = self.parentTank.loc()[0] + 21
         self.y = self.parentTank.loc()[1] + 23
         self.aimVector = VectorManagement((self.x, self.y), pygame.mouse.get_pos())
         self.image = pygame.transform.rotate(self.OGImage, self.aimVector.get_Angle())
@@ -89,11 +93,14 @@ class Turret(pygame.sprite.Sprite):
         self.rect.center = self.x, self.y
 
     def update(self):
-        self.x = self.parentTank.loc()[0] + 21.5
-        self.y = self.parentTank.loc()[1] + 23
+        self.x = self.parentTank.loc()[0]
+        self.y = self.parentTank.loc()[1]
         self.aimVector = VectorManagement((self.x, self.y), pygame.mouse.get_pos())
+        invertVector = self.aimVector.get_UnitVector()[0] * 19, self.aimVector.get_UnitVector()[1] * 19
+        self.aimVector = VectorManagement((self.x+invertVector[0], self.y+invertVector[1]), pygame.mouse.get_pos())
         self.image = pygame.transform.rotate(self.OGImage, self.aimVector.get_Angle())
-        self.rect.center = self.x, self.y
+        self.rect = self.image.get_rect()
+        self.rect.center = self.x+invertVector[0], self.y+invertVector[1]
 
 
 class Player(Tank):

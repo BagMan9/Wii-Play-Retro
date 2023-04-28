@@ -27,6 +27,7 @@ AllSprites = pygame.sprite.Group()
 playerTankBaseImg = tankSheet.image_at((647, 928, 333, 375), 25)
 playerTankTurretImg = tankSheet.image_at((1092, 884, 159, 328), 25)
 bulletSpriteImg = tankSheet.image_at((414, 419, 17, 66), 50)
+testImg = pygame.transform.scale(pygame.image.load("Assets/testimg.png"), (159*.25, 328*.25))
 
 player = mys.Player(300, 300, playerTankBaseImg, playerTankTurretImg, TankGroup)
 TankGroup.add(player)
