@@ -1,5 +1,6 @@
-import pygame
 import math
+
+import pygame
 
 
 class SpriteSheet(object):
@@ -18,7 +19,7 @@ class SpriteSheet(object):
                 colorKey = image.get_at((0, 0))
             image.set_colorkey(colorKey, pygame.RLEACCEL)
         if scaleAmount != 1:
-            image = pygame.transform.scale(image, (rectangle[2]*scaleAmount, rectangle[3]*scaleAmount))
+            image = pygame.transform.scale(image, (rectangle[2] * scaleAmount, rectangle[3] * scaleAmount))
         return image
 
 
@@ -54,9 +55,9 @@ class VectorManagement:
     def __init__(self, originCoords, targetCoords):
         try:
             self.unitVector = pygame.math.Vector2(targetCoords[0] - originCoords[0],
-                                              targetCoords[1] - originCoords[1]).normalize()
+                                                  targetCoords[1] - originCoords[1]).normalize()
         except ValueError:
-            self.unitVector = 1, 1
+            self.unitVector = [1, 1]
         self.angle = angleFinder(self.unitVector)
 
     def invertDirection(self, axis):
@@ -86,7 +87,7 @@ class VectorManagement:
 
 def angleFinder(vector, units='degree'):  # ONLY USE WITH LEFT HAND COORDS
     radians = math.atan2(-vector[1], vector[0])
-    degrees = radians*(180/math.pi) - 90
+    degrees = radians * (180 / math.pi) - 90
     if units == 'degree':
         return degrees
     if units == 'radian':

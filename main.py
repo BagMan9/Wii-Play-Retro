@@ -1,8 +1,9 @@
 import sys
-import pygame
-import wiiplaytanks as mys
-from basic import SpriteSheet, Hud
 
+import pygame
+
+import wiiplaytanks as mys
+from basic import Hud, SpriteSheet
 
 # Initialization
 pygame.init()
@@ -27,37 +28,39 @@ AllSprites = pygame.sprite.Group()
 playerTankBaseImg = tankSheet.image_at((647, 928, 333, 375), 20)
 playerTankTurretImg = tankSheet.image_at((1092, 884, 159, 328), 20)
 bulletSpriteImg = tankSheet.image_at((414, 419, 17, 66), 40)
-testImg = pygame.transform.scale(pygame.image.load("Assets/testimg.png"), (159*.25, 328*.25))
+testImg = pygame.transform.scale(pygame.image.load("Assets/testimg.png"), (159 * .25, 328 * .25))
 
 player = mys.Player(300, 300, playerTankBaseImg, playerTankTurretImg, TankGroup)
 TankGroup.add(player)
 TankGroup.move_to_back(player)
 
 
+# noinspection PyUnboundLocalVariable
 def main():
-    global gameState
-    # Quit Checking
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            global running
-            running = False
-            pygame.quit()
-            sys.exit()
-    # Grabbing player input
-    keys = pygame.key.get_pressed()
+    while running:
+        global gameState
+        # Quit Checking
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                global running
+                running = False
+                pygame.quit()
+                sys.exit()
+        # Grabbing player input
+        keys = pygame.key.get_pressed()
 
-    # Title Screen
-    if gameState == 0:
-        title_screen(keys)
+        # Title Screen
+        if gameState == 0:
+            title_screen(keys)
 
-    if gameState == 1:
-        player_movement(player, keys)
-        # pygame.sprite.groupcollide(BulletGroup, TankGroup, True, True)
-        gameWindow.fill("white")
-        hud.score = len(BulletGroup)
-        hud.game_info()
-        update()
-    clock.tick(60)
+        if gameState == 1:
+            player_movement(player, keys)
+            # pygame.sprite.groupcollide(BulletGroup, TankGroup, True, True)
+            gameWindow.fill("white")
+            hud.score = len(BulletGroup)
+            hud.game_info()
+            update()
+        clock.tick(60)
 
 
 def title_screen(keys):
@@ -92,7 +95,6 @@ def player_movement(sprite, keys):
 
 
 if __name__ == "__main__":
-    while running:
-        main()
+    main()
 
 pygame.quit()

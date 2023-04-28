@@ -1,4 +1,5 @@
 import pygame
+
 from basic import VectorManagement
 
 
@@ -95,14 +96,14 @@ class Turret(pygame.sprite.Sprite):
         mouse = pygame.mouse.get_pos()
         self.aimVector = VectorManagement((self.x, self.y), mouse)
         self.invertVector = self.aimVector.get_UnitVector()[0] * 19, self.aimVector.get_UnitVector()[1] * 19
-        self.aimVector = VectorManagement((self.x+self.invertVector[0], self.y+self.invertVector[1]), mouse)
+        self.aimVector = VectorManagement((self.x + self.invertVector[0], self.y + self.invertVector[1]), mouse)
         self.image = pygame.transform.rotate(self.OGImage, self.aimVector.get_Angle())
         self.rect = self.image.get_rect()
-        self.rect.center = self.x+self.invertVector[0], self.y+self.invertVector[1]
+        self.rect.center = self.x + self.invertVector[0], self.y + self.invertVector[1]
 
     def bullet(self, image, bulletGroup, allGroup):
-        projectile = Bullet(image, self.rect.center[0]+self.invertVector[0]*2,
-                            self.rect.center[1]+self.invertVector[1]*2, self.aimVector)
+        projectile = Bullet(image, self.rect.center[0] + self.invertVector[0] * 2,
+                            self.rect.center[1] + self.invertVector[1] * 2, self.aimVector)
         bulletGroup.add(projectile)
         allGroup.add(projectile)
 
