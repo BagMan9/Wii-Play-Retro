@@ -26,15 +26,13 @@ class Tank(pygame.sprite.Sprite):
     def loc(self):
         return self.x, self.y
 
-    def bulletShoot(self, image, target_coord, group, AllGroup):
+    def bulletShoot(self, image, bulletGroup, allGroup):
         if self.firing:
             pass
         else:
             self.firing_time = pygame.time.get_ticks()
             self.firing = True
-            projectile = Bullet(image, self.x + 70, self.y + 30, target_coord[0], target_coord[1])
-            group.add(projectile)
-            AllGroup.add(projectile)
+            self.tankTurret.bullet(image, bulletGroup, allGroup)
 
     def update(self):
         self.rect.center = self.x, self.y
@@ -43,15 +41,13 @@ class Tank(pygame.sprite.Sprite):
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, target_x, target_y, velocityMultiplier=10):
+    def __init__(self, image, x, y, vector, velocityMultiplier=10):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
         self.originalImage = image
-        self.target_x = target_x
-        self.target_y = target_y
         self.velocityMultiplier = velocityMultiplier
-        self.direction = VectorManagement((self.x, self.y), (self.target_x, self.target_y))
+        self.direction = vector
         self.perTicDistance = self.direction.get_UnitVector()
         self.angle = self.direction.get_Angle()
         self.image = pygame.transform.rotate(self.originalImage, self.angle)
@@ -87,6 +83,7 @@ class Turret(pygame.sprite.Sprite):
         self.OGImage = image
         self.x = self.parentTank.loc()[0] + 21
         self.y = self.parentTank.loc()[1] + 23
+        self.invertVector = 0, 0
         self.aimVector = VectorManagement((self.x, self.y), pygame.mouse.get_pos())
         self.image = pygame.transform.rotate(self.OGImage, self.aimVector.get_Angle())
         self.rect = self.image.get_rect()
@@ -95,12 +92,19 @@ class Turret(pygame.sprite.Sprite):
     def update(self):
         self.x = self.parentTank.loc()[0]
         self.y = self.parentTank.loc()[1]
-        self.aimVector = VectorManagement((self.x, self.y), pygame.mouse.get_pos())
-        invertVector = self.aimVector.get_UnitVector()[0] * 19, self.aimVector.get_UnitVector()[1] * 19
-        self.aimVector = VectorManagement((self.x+invertVector[0], self.y+invertVector[1]), pygame.mouse.get_pos())
+        mouse = pygame.mouse.get_pos()
+        self.aimVector = VectorManagement((self.x, self.y), mouse)
+        self.invertVector = self.aimVector.get_UnitVector()[0] * 19, self.aimVector.get_UnitVector()[1] * 19
+        self.aimVector = VectorManagement((self.x+self.invertVector[0], self.y+self.invertVector[1]), mouse)
         self.image = pygame.transform.rotate(self.OGImage, self.aimVector.get_Angle())
         self.rect = self.image.get_rect()
-        self.rect.center = self.x+invertVector[0], self.y+invertVector[1]
+        self.rect.center = self.x+self.invertVector[0], self.y+self.invertVector[1]
+
+    def bullet(self, image, bulletGroup, allGroup):
+        projectile = Bullet(image, self.rect.center[0]+self.invertVector[0]*2,
+                            self.rect.center[1]+self.invertVector[1]*2, self.aimVector)
+        bulletGroup.add(projectile)
+        allGroup.add(projectile)
 
 
 class Player(Tank):

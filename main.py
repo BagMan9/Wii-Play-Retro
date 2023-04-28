@@ -88,7 +88,7 @@ def player_movement(sprite, keys):
         sprite.x += 300 * dt
     if keys[pygame.K_SPACE]:
         if len(BulletGroup) <= 2:
-            sprite.bulletShoot(bulletSpriteImg, pygame.mouse.get_pos(), BulletGroup, AllSprites)
+            sprite.bulletShoot(bulletSpriteImg, BulletGroup, AllSprites)
 
 
 if __name__ == "__main__":
