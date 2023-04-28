@@ -25,7 +25,7 @@ TankGroup = pygame.sprite.LayeredUpdates()
 BulletGroup = pygame.sprite.Group()
 AllSprites = pygame.sprite.Group()
 
-playerTankBaseImg = tankSheet.image_at((647, 928, 333, 375), 20)
+playerTankBaseImg = pygame.transform.rotate(tankSheet.image_at((647, 928, 333, 375), 20), 270)
 playerTankTurretImg = tankSheet.image_at((1092, 884, 159, 328), 20)
 bulletSpriteImg = tankSheet.image_at((414, 419, 17, 66), 40)
 testImg = pygame.transform.scale(pygame.image.load("Assets/testimg.png"), (159 * .25, 328 * .25))
@@ -37,12 +37,12 @@ TankGroup.move_to_back(player)
 
 # noinspection PyUnboundLocalVariable
 def main():
+    global running
     while running:
         global gameState
         # Quit Checking
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                global running
                 running = False
                 pygame.quit()
                 sys.exit()
@@ -81,14 +81,15 @@ def update():
 
 
 def player_movement(sprite, keys):
+    moveAmount = 300
     if keys[pygame.K_w]:
-        sprite.y -= 300 * dt
+        sprite.y -= moveAmount * dt
     if keys[pygame.K_s]:
-        sprite.y += 300 * dt
+        sprite.y += moveAmount * dt
     if keys[pygame.K_a]:
-        sprite.x -= 300 * dt
+        sprite.x -= moveAmount * dt
     if keys[pygame.K_d]:
-        sprite.x += 300 * dt
+        sprite.x += moveAmount * dt
     if keys[pygame.K_SPACE]:
         if len(BulletGroup) <= 2:
             sprite.bulletShoot(bulletSpriteImg, BulletGroup, AllSprites)

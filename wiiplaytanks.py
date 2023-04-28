@@ -8,11 +8,19 @@ from basic import VectorManagement
 class Tank(pygame.sprite.Sprite):
     def __init__(self, x, y, image, gunImage, tankGroup):
         """
-        TODO: Move image rotation outside class
         TODO: Make image rotation reflect player movement
+        :param x: X-Axis
+        :type x: int
+        :param y: Y-Axis
+        :type y: int
+        :param image: Sprite Image
+        :type image: pygame.surface.Surface
+        :param gunImage: Turret Image
+        :type gunImage: pygame.surface.Surface
+        :param tankGroup: Sprite Group (layered)
         """
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.rotate(image, 270)
+        self.image = image
         self.rect = self.image.get_rect()
         self.gunImage = gunImage
         self.rect.center = (x, y)
