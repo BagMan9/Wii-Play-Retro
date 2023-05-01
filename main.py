@@ -24,11 +24,13 @@ tankSheet = SpriteSheet("Assets/TanksSheet.png")
 TankGroup = pygame.sprite.LayeredUpdates()
 BulletGroup = pygame.sprite.Group()
 AllSprites = pygame.sprite.Group()
+BombGroup = pygame.sprite.Group()
 
 playerTankBaseImg = pygame.transform.rotate(tankSheet.image_at((647, 928, 333, 375), 20), 270)
 playerTankTurretImg = tankSheet.image_at((1092, 884, 159, 328), 20)
 bulletSpriteImg = tankSheet.image_at((414, 419, 17, 66), 40)
 testImg = pygame.transform.scale(pygame.image.load("Assets/testimg.png"), (159 * .25, 328 * .25))
+bombSpriteImg = pygame.transform.scale(pygame.image.load("Assets/bomb.png"), (64, 64))
 
 player = mys.Player(300, 300, playerTankBaseImg, playerTankTurretImg, TankGroup)
 TankGroup.add(player)
@@ -90,9 +92,10 @@ def player_movement(sprite: mys.Player, keys) -> None:
         sprite.x -= moveAmount * dt
     if keys[pygame.K_d]:
         sprite.x += moveAmount * dt
-    if keys[pygame.K_SPACE]:
-        if len(BulletGroup) <= 2:
-            sprite.bulletShoot(bulletSpriteImg, BulletGroup, AllSprites)
+    if keys[pygame.K_b] and len(BombGroup) < 1:
+        sprite.bombShoot(bombSpriteImg, BombGroup, AllSprites)
+    if keys[pygame.K_SPACE] and len(BulletGroup) <= 2:
+        sprite.bulletShoot(bulletSpriteImg, BulletGroup, AllSprites)
 
 
 if __name__ == "__main__":

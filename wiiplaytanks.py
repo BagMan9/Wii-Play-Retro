@@ -51,57 +51,23 @@ class Tank(pygame.sprite.Sprite):
             self.firing = True
             self.tankTurret.bullet(image, bulletGroup, allGroup)
 
+    def bombShoot(self, image, bombGroup, allGroup) -> None:
+        """
+        :param image: Bomb Image
+        :type image: pygame.surface.Surface
+        :param bombGroup: Bomb Group
+        :type bombGroup: pygame.sprite.Group
+        :param allGroup: All Group
+        :type allGroup: pygame.sprite.Group
+        """
+        bomb = Bomb(image, (self.x, self.y))
+        bombGroup.add(bomb)
+        allGroup.add(bomb)
+
     def update(self) -> None:
         self.rect.center = self.x, self.y
         if self.firing and pygame.time.get_ticks() - self.firing_time > self.firing_delay:
             self.firing = False
-
-
-class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, vector, velocityMultiplier=10) -> None:
-        """
-        :param image: Sprite Image
-        :type image: pygame.surface.Surface
-        :param x: Spawn X-axis
-        :type x: int
-        :param y: Spawn Y-Axis
-        :type y: int
-        :param vector: Bullet Direction vector object
-        :param velocityMultiplier: Speed factor
-        :type velocityMultiplier: int
-        """
-        pygame.sprite.Sprite.__init__(self)
-        self.x = x
-        self.y = y
-        self.originalImage = image
-        self.velocityMultiplier = velocityMultiplier
-        self.direction = vector
-        self.perTicDistance = self.direction.get_UnitVector()
-        self.angle = self.direction.get_Angle()
-        self.image = pygame.transform.rotate(self.originalImage, self.angle)
-        self.rect = self.image.get_rect()
-        self.rect.center = self.x, self.y
-        self.bounceCount = 0
-
-    def loc(self) -> tuple:
-        return self.x, self.y
-
-    def update(self) -> None:
-        self.x += self.perTicDistance[0] * self.velocityMultiplier
-        self.y += self.perTicDistance[1] * self.velocityMultiplier
-        if not 0 < self.x < 1280:
-            self.perTicDistance[0] = self.direction.invertDirection('x')
-            self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
-            self.rect = self.image.get_rect()
-            self.bounceCount += 1
-        if not 0 < self.y < 720:
-            self.perTicDistance[1] = self.direction.invertDirection('y')
-            self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
-            self.rect = self.image.get_rect()
-            self.bounceCount += 1
-        if self.bounceCount >= 3:
-            self.kill()
-        self.rect.center = self.x, self.y
 
 
 class Turret(pygame.sprite.Sprite):
@@ -147,6 +113,53 @@ class Turret(pygame.sprite.Sprite):
             allGroup.add(projectile)
 
 
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, image, x, y, vector, velocityMultiplier=10) -> None:
+        """
+        :param image: Sprite Image
+        :type image: pygame.surface.Surface
+        :param x: Spawn X-axis
+        :type x: int
+        :param y: Spawn Y-Axis
+        :type y: int
+        :param vector: Bullet Direction vector object
+        :param velocityMultiplier: Speed factor
+        :type velocityMultiplier: int
+        """
+        pygame.sprite.Sprite.__init__(self)
+        self.x = x
+        self.y = y
+        self.originalImage = image
+        self.velocityMultiplier = velocityMultiplier
+        self.direction = vector
+        self.perTicDistance = self.direction.get_UnitVector()
+        self.angle = self.direction.get_Angle()
+        self.image = pygame.transform.rotate(self.originalImage, self.angle)
+        self.rect = self.image.get_rect()
+        self.rect.center = self.x, self.y
+        self.bounceCount = 0
+
+    def loc(self) -> tuple:
+        return self.x, self.y
+
+    def update(self) -> None:
+        self.x += self.perTicDistance[0] * self.velocityMultiplier
+        self.y += self.perTicDistance[1] * self.velocityMultiplier
+        if not 0 < self.x < 1280:
+            self.perTicDistance[0] = self.direction.invertDirection('x')
+            self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
+            self.rect = self.image.get_rect()
+            self.bounceCount += 1
+        if not 0 < self.y < 720:
+            self.perTicDistance[1] = self.direction.invertDirection('y')
+            self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
+            self.rect = self.image.get_rect()
+            self.bounceCount += 1
+        if self.bounceCount >= 2:
+            self.kill()
+        self.rect.center = self.x, self.y
+
+
 class Player(Tank):
     def __init__(self, x, y, image, gunImage, allGroup) -> None:
         super().__init__(x, y, image, gunImage, allGroup)
@@ -155,7 +168,6 @@ class Player(Tank):
 class Bomb(pygame.sprite.Sprite):
     def __init__(self, image, coords) -> None:
         """
-
         :param image: Bomb Image
         :type image: pygame.surface.Surface
         :param coords: X Y position
@@ -167,3 +179,22 @@ class Bomb(pygame.sprite.Sprite):
         self.y = coords[1]
         self.rect = self.image.get_rect()
         self.rect.center = self.x, self.y
+        self.timer = 0
+
+    def update(self) -> None:
+        self.timer += 1
+        if self.timer >= 300:
+            self.kill()
+
+               
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, imageList, coords) -> None:
+        super().__init__(self)
+        self.imageList = imageList
+        self.x = coords[0]
+        self.y = coords[1]
+        self.counter = 0
+
+    def update(self) -> None:
+        self.counter += 1
+        
