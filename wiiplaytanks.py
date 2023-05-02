@@ -188,11 +188,15 @@ class Bomb(pygame.sprite.Sprite):
 
     def kill(self) -> None:
         super().kill(self)
-        Explosion
+        
 
                
 class Explosion(pygame.sprite.Sprite):
     def __init__(self, imageList, coords, explosionGroup, allGroup) -> None:
+        """
+        :param coords: XY Axis 
+        :type coords: tuple
+        """
         super().__init__(self)
         self.imageList = imageList
         self.x = coords[0]
