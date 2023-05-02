@@ -57,7 +57,7 @@ def main() -> None:
 
         if gameState == 1:
             player_movement(player, keys)
-            # pygame.sprite.groupcollide(BulletGroup, TankGroup, True, True)
+            pygame.sprite.groupcollide(BombGroup, BulletGroup, True, True)
             gameWindow.fill("white")
             hud.score = len(BulletGroup)
             hud.game_info()

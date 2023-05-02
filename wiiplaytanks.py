@@ -186,14 +186,20 @@ class Bomb(pygame.sprite.Sprite):
         if self.timer >= 300:
             self.kill()
 
+    def kill(self) -> None:
+        super().kill(self)
+        Explosion
+
                
 class Explosion(pygame.sprite.Sprite):
-    def __init__(self, imageList, coords) -> None:
+    def __init__(self, imageList, coords, explosionGroup, allGroup) -> None:
         super().__init__(self)
         self.imageList = imageList
         self.x = coords[0]
         self.y = coords[1]
         self.counter = 0
+        explosionGroup.add(self)
+        allGroup.add(self)
 
     def update(self) -> None:
         self.counter += 1
