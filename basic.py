@@ -53,7 +53,7 @@ class Hud:
         if not end:
             instructText = self.mainFont.render("PRESS ENTER TO START", True, color)
         else:
-            instructText = self.mainFont.render("PRESS ENTER TO RESTART", True, color)
+            instructText = self.mainFont.render("PRESS ENTER TO QUIT", True, color)
         titleTextRect = titleText.get_rect()
         instructTextRect = instructText.get_rect()
         titleTextRect.center = self.windowSize[0] / 2 + x_offset, self.windowSize[1] / 2 + y_offset

@@ -75,8 +75,11 @@ def main() -> None:
 
         # Title Screen
         if gameStage == 0:
+            if pygame.mixer.music.get_busy():
+                pygame.mixer.music.stop()
             title_screen(keys)
             completed = False
+            played = False
 
         if gameStage == 1:
             if not pygame.mixer.music.get_busy() and not looped:
@@ -102,7 +105,7 @@ def main() -> None:
             if len(EnemyTankGroup) == 0:
                 hud.score += 1
                 gameStarted = False
-                gameStage += 1.1
+                gameStage = 1.1
             player_movement(player, keys)
             gameWindow.fill("white")
             hud.game_info()
@@ -143,12 +146,15 @@ def main() -> None:
                 hud.score += 1
                 gameStarted = False
                 gameStage = 1.3
+            player_movement(player, keys)
+            gameWindow.fill("white")
+            hud.game_info()
         if gameStage == 1.3:
             if not gameStarted:
                 x_offset = 25
                 for _ in range(9):
                     target = mys.Target(hayBale, 400 + x_offset + random.randrange(-350, 350),
-                                        1, random.randrange(-10, 10), random.randrange(-10, 20),
+                                        1, random.randrange(-5, 5), random.randrange(-5, 5),
                                         random.randrange(-1, 2), 0,
                                         ExplosionSpriteGroup, AllSprites)
                     EnemyTankGroup.add(target)
@@ -173,26 +179,29 @@ def main() -> None:
         pygame.sprite.groupcollide(EnemyBulletGroup, EnemyTankGroup, True, True)
         if gameStage == -1:
             AllSprites.empty()
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load("Assets/Music/Round Failure.mp3")
-            pygame.mixer.music.play()
+            if not played:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load("Assets/Music/Round Failure.mp3")
+                pygame.mixer.music.play()
+                played = True
             gameWindow.fill("black")
             hud.main_menu("Game Over", "red", True)
             if keys[pygame.K_RETURN]:
-                pygame.mixer.music.play()
-                gameStage = 0
+                break
 
         if gameStage == 2:
             AllSprites.empty()
             player.kill()
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load("Assets/Music/Super BGM Loop.mp3")
-            pygame.mixer.music.play()
+            if not played:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load("Assets/Music/Super BGM Loop.mp3")
+                pygame.mixer.music.play()
+                played = True
             gameWindow.fill("black")
             hud.main_menu("You win!", "green", True)
             if keys[pygame.K_RETURN]:
                 pygame.mixer.music.play()
-                gameStage = 0
+                break
         update()
         clock.tick(60)
 
