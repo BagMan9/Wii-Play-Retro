@@ -1,6 +1,7 @@
 import random
 from sys import exit
-
+import os
+import sys
 import pygame
 from math import ceil
 import wiiplaytanks as mys
@@ -187,7 +188,7 @@ def main() -> None:
             gameWindow.fill("black")
             hud.main_menu("Game Over", "red", True)
             if keys[pygame.K_RETURN]:
-                break
+                os.execl(sys.executable, sys.executable, *sys.argv)
 
         if gameStage == 2:
             AllSprites.empty()
@@ -200,8 +201,7 @@ def main() -> None:
             gameWindow.fill("black")
             hud.main_menu("You win!", "green", True)
             if keys[pygame.K_RETURN]:
-                pygame.mixer.music.play()
-                break
+                os.execl(sys.executable, sys.executable, *sys.argv)
         update()
         clock.tick(60)
 
