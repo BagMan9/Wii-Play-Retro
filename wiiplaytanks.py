@@ -1,6 +1,11 @@
 import pygame
+import pygame.examples.audiocapture
 
 from basic import VectorManagement
+
+
+pygame.mixer.init()
+bulletBounce_Sound = pygame.mixer.Sound('Assets/Sound Effects/bounce.wav')
 
 
 # Wii Play Tank Objects
@@ -35,8 +40,9 @@ class Tank(pygame.sprite.Sprite):
     def loc(self) -> tuple:
         return self.x, self.y
 
-    def bulletShoot(self, image, bulletGroup, enemyBulletGroup, allGroup) -> None:
+    def bulletShoot(self, image, bulletGroup, enemyBulletGroup, allGroup, sound) -> None:
         """
+        :param sound:
         :param enemyBulletGroup:
         :type enemyBulletGroup:
         :param image:
@@ -51,10 +57,13 @@ class Tank(pygame.sprite.Sprite):
         else:
             self.firing_time = pygame.time.get_ticks()
             self.firing = True
+            sound.play()
             self.tankTurret.bullet(image, enemyBulletGroup, bulletGroup, allGroup)
 
-    def bombShoot(self, image, altImage, bombGroup, explosionGroup, allGroup) -> None:
+    def bombShoot(self, image, altImage, bombGroup, explosionGroup, allGroup, sound) -> None:
         """
+        :param sound: Sound file
+        :type sound:
         :param explosionGroup:
         :type explosionGroup:
         :param altImage: Alt Bomb Image
@@ -66,7 +75,7 @@ class Tank(pygame.sprite.Sprite):
         :param allGroup: All Group
         :type allGroup: pygame.sprite.Group
         """
-        bomb = Bomb(image, altImage, (self.x, self.y), explosionGroup, allGroup)
+        bomb = Bomb(image, altImage, (self.x, self.y), explosionGroup, allGroup, sound)
         bombGroup.add(bomb)
         allGroup.add(bomb)
 
@@ -167,12 +176,14 @@ class Bullet(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.bounceCount += 1
             self.enemyBulletGroup.add(self)
+            bulletBounce_Sound.play()
         if not 0 < self.y < 720:
             self.perTicDistance[1] = self.direction.invertDirection('y')
             self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
             self.rect = self.image.get_rect()
             self.bounceCount += 1
             self.enemyBulletGroup.add(self)
+            bulletBounce_Sound.play()
         if self.bounceCount >= 2:
             self.kill()
         self.rect.center = self.x, self.y
@@ -184,8 +195,10 @@ class Player(Tank):
 
 
 class Bomb(pygame.sprite.Sprite):
-    def __init__(self, image, alt_Image, coords, explosionGroup, allGroup) -> None:
+    def __init__(self, image, alt_Image, coords, explosionGroup, allGroup, sound) -> None:
         """
+        :param sound:
+        :type sound:
         :param explosionGroup: pygame.sprite.Group
         :type explosionGroup: pygame.sprite.Group
         :param allGroup: pygame.sprite.Group
@@ -206,6 +219,7 @@ class Bomb(pygame.sprite.Sprite):
         self.timer = 0
         self.explosionGroup = explosionGroup
         self.allGroup = allGroup
+        self.sound = sound
 
     def update(self) -> None:
         self.timer += 1
@@ -217,15 +231,17 @@ class Bomb(pygame.sprite.Sprite):
 
     def kill(self) -> None:
         super().kill()
-        explode = Explosion(self.x, self.y, 5.5)
+        explode = Explosion(self.x, self.y, 5.5, self.sound)
         self.explosionGroup.add(explode)
         self.allGroup.add(explode)
 
 
 class Explosion(pygame.sprite.Sprite):
 
-    def __init__(self, x, y, size) -> None:
+    def __init__(self, x, y, size, sound) -> None:
         """
+        :param sound:
+        :type sound:
         :param x: X Axis location
         :type x: float
         :param y: Y Axis location
@@ -244,9 +260,11 @@ class Explosion(pygame.sprite.Sprite):
         self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.center = self.x - 32, self.y - 32
+        self.sound = sound
 
     def update(self) -> None:
         if self.imageNumber == 8:
+            self.sound.play()
             self.kill()
         else:
             self.image = self.images[self.imageNumber]

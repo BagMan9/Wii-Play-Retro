@@ -14,7 +14,9 @@ windowSize = verticalResolution * aspectRatio, verticalResolution
 gameWindow = pygame.display.set_mode(windowSize)
 pygame.display.set_caption("WiiPlay Retro")
 clock = pygame.time.Clock()
+gameStarted = False
 running = True
+looped = False
 dt = .01
 gameStage = 0
 hud = Hud(gameWindow, windowSize, titleFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf",
@@ -38,14 +40,17 @@ testImg = pygame.transform.scale(pygame.image.load("Assets/testimg.png"), (159 *
 bombSpriteImg = pygame.transform.scale(pygame.image.load("Assets/bomb.png"), (64, 64))
 bombSpriteImg_Red = pygame.transform.scale(pygame.image.load("Assets/bomb-red.png"), (64, 64))
 
-
-started = False
+# Sounds
+fire = pygame.mixer.Sound('Assets/Sound Effects/norm_fire.wav')
+explode_sound = pygame.mixer.Sound('Assets/Sound Effects/explosion.wav')
+pygame.mixer.music.load('Assets/Music/Tanks Main BGM.mp3')
 
 
 # noinspection PyUnboundLocalVariable
 def main() -> None:
     global running
-    global started
+    global gameStarted
+    global looped
     while running:
         global gameStage
         # Quit Checking
@@ -62,12 +67,16 @@ def main() -> None:
             title_screen(keys)
 
         if gameStage == 1:
-            if not started:
+            if not pygame.mixer.music.get_busy() and not looped:
+                pygame.mixer.music.load('Assets/Music/BGM Loop.mp3')
+                pygame.mixer.music.play(-1)
+                looped = True
+            if not gameStarted:
                 player = mys.Player(300, 300, playerTankBaseImg, playerTankTurretImg, TankGroup)
                 TankGroup.add(player)
                 TankGroup.move_to_back(player)
                 PlayerGroup.add(player)
-                started = True
+                gameStarted = True
             player_movement(player, keys)
             pygame.sprite.groupcollide(BombGroup, PlayerBulletGroup, True, True)
             pygame.sprite.groupcollide(ExplosionSpriteGroup, TankGroup, False, True)
@@ -88,6 +97,7 @@ def main() -> None:
 def title_screen(keys) -> None:
     global gameStage
     if keys[pygame.K_RETURN]:
+        pygame.mixer.music.play()
         gameStage = 1
 
     gameWindow.fill("black")
@@ -113,9 +123,9 @@ def player_movement(sprite: mys.Player, keys) -> None:
     if keys[pygame.K_d]:
         sprite.x += moveAmount * dt
     if keys[pygame.K_b] and len(BombGroup) < 1:
-        sprite.bombShoot(bombSpriteImg, bombSpriteImg_Red, BombGroup, ExplosionSpriteGroup, AllSprites)
+        sprite.bombShoot(bombSpriteImg, bombSpriteImg_Red, BombGroup, ExplosionSpriteGroup, AllSprites, explode_sound)
     if keys[pygame.K_SPACE] and len(PlayerBulletGroup) <= 2:
-        sprite.bulletShoot(bulletSpriteImg, PlayerBulletGroup, EnemyBulletGroup, AllSprites)
+        sprite.bulletShoot(bulletSpriteImg, PlayerBulletGroup, EnemyBulletGroup, AllSprites, fire)
 
 
 if __name__ == "__main__":
