@@ -48,9 +48,12 @@ class Hud:
         self.titleFont = pygame.font.Font(titleFontFile, self.titleSize)
         self.mainFont = pygame.font.Font(mainFontFile, self.mainSize)
 
-    def main_menu(self, text, color, x_offset=0, y_offset=0) -> None:
+    def main_menu(self, text, color, end=False, x_offset=0, y_offset=0) -> None:
         titleText = self.titleFont.render(text, True, color)
-        instructText = self.mainFont.render("PRESS ENTER TO START", True, color)
+        if not end:
+            instructText = self.mainFont.render("PRESS ENTER TO START", True, color)
+        else:
+            instructText = self.mainFont.render("PRESS ENTER TO RESTART", True, color)
         titleTextRect = titleText.get_rect()
         instructTextRect = instructText.get_rect()
         titleTextRect.center = self.windowSize[0] / 2 + x_offset, self.windowSize[1] / 2 + y_offset
@@ -60,7 +63,7 @@ class Hud:
         pygame.display.flip()
 
     def game_info(self, scoreLocation=0, levelLocation=0, livesLocation=0) -> None:
-        scoreString = f"Score: {self.score}"
+        scoreString = f"Waves Survived: {self.score}"
         scoreText = self.mainFont.render(scoreString, True, "red")
         scoreTextRect = scoreText.get_rect()
         scoreTextRect.topleft = 8, 8
