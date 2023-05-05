@@ -7,6 +7,7 @@ from basic import Hud, SpriteSheet
 
 # Initialization
 pygame.init()
+pygame.mixer.init()
 verticalResolution = 720
 aspectRatio = 16 / 9
 windowSize = verticalResolution * aspectRatio, verticalResolution
@@ -15,8 +16,9 @@ pygame.display.set_caption("WiiPlay Retro")
 clock = pygame.time.Clock()
 running = True
 dt = .01
-gameState = 0
-hud = Hud(gameWindow, windowSize, titleFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf")
+gameStage = 0
+hud = Hud(gameWindow, windowSize, titleFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf",
+          mainFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf")
 
 # Sprite Vars
 tankSheet = SpriteSheet("Assets/TanksSheet.png")
@@ -24,7 +26,8 @@ tankSheet = SpriteSheet("Assets/TanksSheet.png")
 AllSprites = pygame.sprite.Group()
 TankGroup = pygame.sprite.LayeredUpdates()
 PlayerGroup = pygame.sprite.Group()
-BulletGroup = pygame.sprite.Group()
+PlayerBulletGroup = pygame.sprite.Group()
+EnemyBulletGroup = pygame.sprite.Group()
 BombGroup = pygame.sprite.Group()
 ExplosionSpriteGroup = pygame.sprite.Group()
 
@@ -44,7 +47,7 @@ def main() -> None:
     global running
     global started
     while running:
-        global gameState
+        global gameStage
         # Quit Checking
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -55,10 +58,10 @@ def main() -> None:
         keys = pygame.key.get_pressed()
 
         # Title Screen
-        if gameState == 0:
+        if gameStage == 0:
             title_screen(keys)
 
-        if gameState == 1:
+        if gameStage == 1:
             if not started:
                 player = mys.Player(300, 300, playerTankBaseImg, playerTankTurretImg, TankGroup)
                 TankGroup.add(player)
@@ -66,16 +69,16 @@ def main() -> None:
                 PlayerGroup.add(player)
                 started = True
             player_movement(player, keys)
-            pygame.sprite.groupcollide(BombGroup, BulletGroup, True, True)
+            pygame.sprite.groupcollide(BombGroup, PlayerBulletGroup, True, True)
             pygame.sprite.groupcollide(ExplosionSpriteGroup, TankGroup, False, True)
-            pygame.sprite.groupcollide(TankGroup, BulletGroup, False, False)
+            pygame.sprite.groupcollide(TankGroup, EnemyBulletGroup, True, True)
             gameWindow.fill("white")
-            hud.score = len(BulletGroup)
+            hud.score = len(PlayerBulletGroup)
             hud.game_info()
             if not PlayerGroup:
-                gameState = -1
+                gameStage = -1
 
-        if gameState == -1:
+        if gameStage == -1:
             gameWindow.fill("black")
             hud.main_menu("Game Over", "red")
         update()
@@ -83,12 +86,12 @@ def main() -> None:
 
 
 def title_screen(keys) -> None:
-    global gameState
-    if keys[pygame.K_SPACE]:
-        gameState = 1
+    global gameStage
+    if keys[pygame.K_RETURN]:
+        gameStage = 1
 
     gameWindow.fill("black")
-    hud.main_menu("Wii Play Retro", "orange", y_offset=-100)
+    hud.main_menu("Wii Play: Tanks!", "orange", y_offset=-100)
 
 
 def update() -> None:
@@ -111,8 +114,8 @@ def player_movement(sprite: mys.Player, keys) -> None:
         sprite.x += moveAmount * dt
     if keys[pygame.K_b] and len(BombGroup) < 1:
         sprite.bombShoot(bombSpriteImg, bombSpriteImg_Red, BombGroup, ExplosionSpriteGroup, AllSprites)
-    if keys[pygame.K_SPACE] and len(BulletGroup) <= 2:
-        sprite.bulletShoot(bulletSpriteImg, BulletGroup, AllSprites)
+    if keys[pygame.K_SPACE] and len(PlayerBulletGroup) <= 2:
+        sprite.bulletShoot(bulletSpriteImg, PlayerBulletGroup, EnemyBulletGroup, AllSprites)
 
 
 if __name__ == "__main__":

@@ -50,9 +50,13 @@ class Hud:
 
     def main_menu(self, text, color, x_offset=0, y_offset=0) -> None:
         titleText = self.titleFont.render(text, True, color)
+        instructText = self.mainFont.render("PRESS ENTER TO START", True, color)
         titleTextRect = titleText.get_rect()
+        instructTextRect = instructText.get_rect()
         titleTextRect.center = self.windowSize[0] / 2 + x_offset, self.windowSize[1] / 2 + y_offset
+        instructTextRect.center = self.windowSize[0] / 2 + x_offset, self.windowSize[1] / 2 + y_offset + 150
         self.gameWindow.blit(titleText, titleTextRect)
+        self.gameWindow.blit(instructText, instructTextRect)
         pygame.display.flip()
 
     def game_info(self, scoreLocation=0, levelLocation=0, livesLocation=0) -> None:

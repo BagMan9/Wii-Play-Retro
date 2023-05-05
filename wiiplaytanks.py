@@ -35,8 +35,10 @@ class Tank(pygame.sprite.Sprite):
     def loc(self) -> tuple:
         return self.x, self.y
 
-    def bulletShoot(self, image, bulletGroup, allGroup) -> None:
+    def bulletShoot(self, image, bulletGroup, enemyBulletGroup, allGroup) -> None:
         """
+        :param enemyBulletGroup:
+        :type enemyBulletGroup:
         :param image:
         :type image: pygame.surface.Surface
         :param bulletGroup:
@@ -49,7 +51,7 @@ class Tank(pygame.sprite.Sprite):
         else:
             self.firing_time = pygame.time.get_ticks()
             self.firing = True
-            self.tankTurret.bullet(image, bulletGroup, allGroup)
+            self.tankTurret.bullet(image, enemyBulletGroup, bulletGroup, allGroup)
 
     def bombShoot(self, image, altImage, bombGroup, explosionGroup, allGroup) -> None:
         """
@@ -102,24 +104,33 @@ class Turret(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = self.x + self.invertVector[0], self.y + self.invertVector[1]
 
-    def bullet(self, image, bulletGroup=None, allGroup=None) -> None:
+    def bullet(self, image, enemyBulletGroup, bulletGroup=None, allGroup=None) -> None:
         """
+        :param enemyBulletGroup:
+        :type enemyBulletGroup:
         :param image: Sprite Image
         :type image: pygame.surface.Surface
         :param bulletGroup: Sprite Group (for projectiles)
         :param allGroup: All Sprite Group
         """
-        projectile = Bullet(image, self.rect.center[0] + self.invertVector[0] * 2,
-                            self.rect.center[1] + self.invertVector[1] * 2, self.aimVector)
+        projectile = Bullet(image, self.rect.center[0] + self.invertVector[0] * 3,
+                            self.rect.center[1] + self.invertVector[1] * 3, self.aimVector,
+                            enemyBulletGroup)
         if bulletGroup is not None:
             bulletGroup.add(projectile)
         if allGroup is not None:
             allGroup.add(projectile)
 
+    def kill(self) -> None:
+        super().kill()
+        self.parentTank.kill()
+
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, vector, velocityMultiplier=10) -> None:
+    def __init__(self, image, x, y, vector, enemyBulletGroup, velocityMultiplier=10) -> None:
         """
+        :param enemyBulletGroup:
+        :type enemyBulletGroup: pygame.sprite.Group
         :param image: Sprite Image
         :type image: pygame.surface.Surface
         :param x: Spawn X-axis
@@ -142,6 +153,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = self.x, self.y
         self.bounceCount = 0
+        self.enemyBulletGroup = enemyBulletGroup
 
     def loc(self) -> tuple:
         return self.x, self.y
@@ -154,11 +166,13 @@ class Bullet(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
             self.rect = self.image.get_rect()
             self.bounceCount += 1
+            self.enemyBulletGroup.add(self)
         if not 0 < self.y < 720:
             self.perTicDistance[1] = self.direction.invertDirection('y')
             self.image = pygame.transform.rotate(self.originalImage, self.direction.get_Angle())
             self.rect = self.image.get_rect()
             self.bounceCount += 1
+            self.enemyBulletGroup.add(self)
         if self.bounceCount >= 2:
             self.kill()
         self.rect.center = self.x, self.y
