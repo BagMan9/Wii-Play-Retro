@@ -51,8 +51,12 @@ class Tank(pygame.sprite.Sprite):
             self.firing = True
             self.tankTurret.bullet(image, bulletGroup, allGroup)
 
-    def bombShoot(self, image, bombGroup, allGroup) -> None:
+    def bombShoot(self, image, altImage, bombGroup, explosionGroup, allGroup) -> None:
         """
+        :param explosionGroup:
+        :type explosionGroup:
+        :param altImage: Alt Bomb Image
+        :type altImage: pygame.surface.Surface
         :param image: Bomb Image
         :type image: pygame.surface.Surface
         :param bombGroup: Bomb Group
@@ -60,7 +64,7 @@ class Tank(pygame.sprite.Sprite):
         :param allGroup: All Group
         :type allGroup: pygame.sprite.Group
         """
-        bomb = Bomb(image, (self.x, self.y))
+        bomb = Bomb(image, altImage, (self.x, self.y), explosionGroup, allGroup)
         bombGroup.add(bomb)
         allGroup.add(bomb)
 
@@ -166,29 +170,43 @@ class Player(Tank):
 
 
 class Bomb(pygame.sprite.Sprite):
-    def __init__(self, image, coords) -> None:
+    def __init__(self, image, alt_Image, coords, explosionGroup, allGroup) -> None:
         """
+        :param explosionGroup: pygame.sprite.Group
+        :type explosionGroup: pygame.sprite.Group
+        :param allGroup: pygame.sprite.Group
+        :type allGroup: pygame.sprite.Group
         :param image: Bomb Image
         :type image: pygame.surface.Surface
         :param coords: X Y position
         :type coords: tuple
         """
         pygame.sprite.Sprite.__init__(self)
+        self.OGImage = image
         self.image = image
+        self.altImage = alt_Image
         self.x = coords[0]
         self.y = coords[1]
         self.rect = self.image.get_rect()
         self.rect.center = self.x, self.y
         self.timer = 0
+        self.explosionGroup = explosionGroup
+        self.allGroup = allGroup
 
     def update(self) -> None:
         self.timer += 1
-        if self.timer >= 300:
+        self.image = self.OGImage
+        if self.timer % 50 == 0 or self.timer >= 500:
+            self.image = self.altImage
+        if self.timer >= 600:
             self.kill()
 
     def kill(self) -> None:
-        super().kill(self)
- 
+        super().kill()
+        explode = Explosion(self.x, self.y, 5.5)
+        self.explosionGroup.add(explode)
+        self.allGroup.add(explode)
+
 
 class Explosion(pygame.sprite.Sprite):
 
@@ -204,23 +222,20 @@ class Explosion(pygame.sprite.Sprite):
         self.y = y
         self.size = size
         self.images = []
-        self.imagenumber = 0
-        for i in range(1,9):
-            image = pygame.image.load(str(i) + '.png')
+        self.imageNumber = 0
+        for i in range(1, 9):
+            image = pygame.image.load('Assets/explosionImages/' + str(i) + '.png')
             image = pygame.transform.scale_by(image, size)
             self.images.append(image)
         self.image = self.images[0]
         self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y
+        self.rect.center = self.x - 32, self.y - 32
 
     def update(self) -> None:
-        if self.imagenumber == 8:
+        if self.imageNumber == 8:
             self.kill()
         else:
-            self.image = self.images[self.imagenumber]
+            self.image = self.images[self.imageNumber]
             self.rect = self.image.get_rect()
-            self.rect.x = self.x
-            self.rect.y = self.y
-            self.imagenumber += 1
-        
+            self.rect.center = self.x, self.y
+            self.imageNumber += 1

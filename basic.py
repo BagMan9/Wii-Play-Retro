@@ -14,7 +14,6 @@ class SpriteSheet(object):
     def image_at(self, rectangle, scalePercent=100, colorKey=-1) -> pygame.surface.Surface:
         """
         :param rectangle: X, Y, Length, Width
-        :type rectangle: pygame.rect.Rect
         :param scalePercent: Scale image by %
         :type scalePercent: int
         :param colorKey: Specify transparency layer
