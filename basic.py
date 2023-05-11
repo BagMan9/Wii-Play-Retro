@@ -54,6 +54,10 @@ class Hud:
             instructText = self.mainFont.render("PRESS ENTER TO START", True, color)
         else:
             instructText = self.mainFont.render("PRESS ENTER TO RESTART", True, color)
+            scoreText = self.mainFont.render(f"YOU MADE IT THROUGH {self.score} WAVES", True, color)
+            scoreTextRect = scoreText.get_rect()
+            scoreTextRect.center = self.windowSize[0] / 2 + x_offset, self.windowSize[1] / 2 + y_offset + 250
+            self.gameWindow.blit(scoreText, scoreTextRect)
         titleTextRect = titleText.get_rect()
         instructTextRect = instructText.get_rect()
         titleTextRect.center = self.windowSize[0] / 2 + x_offset, self.windowSize[1] / 2 + y_offset

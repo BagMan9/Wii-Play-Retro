@@ -19,13 +19,17 @@ clock = pygame.time.Clock()
 gameStarted = False
 running = True
 looped = False
-dt = .01
+dt = 0.01
 completed = False
 gameStage = 0
 levelStarted = False
 prevFireTime = 99999999
-hud = Hud(gameWindow, windowSize, titleFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf",
-          mainFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf")
+hud = Hud(
+    gameWindow,
+    windowSize,
+    titleFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf",
+    mainFontFile="Assets/fonts/FOT-NewRodin Pro EB.otf",
+)
 
 # Sprite Vars
 tankSheet = SpriteSheet("Assets/TanksSheet.png")
@@ -40,20 +44,28 @@ BombGroup = pygame.sprite.Group()
 ExplosionSpriteGroup = pygame.sprite.Group()
 WallGroup = pygame.sprite.Group()
 
-playerTankBaseImg = pygame.transform.rotate(tankSheet.image_at((647, 928, 333, 375), 15), 270)
+playerTankBaseImg = pygame.transform.rotate(
+    tankSheet.image_at((647, 928, 333, 375), 15), 270
+)
 playerTankTurretImg = tankSheet.image_at((1092, 884, 159, 328), 15)
 bulletSpriteImg = tankSheet.image_at((414, 419, 17, 66), 30)
-testImg = pygame.transform.scale(pygame.image.load("Assets/testimg.png"), (159 * .25, 328 * .25))
+testImg = pygame.transform.scale(
+    pygame.image.load("Assets/testimg.png"), (159 * 0.25, 328 * 0.25)
+)
 bombSpriteImg = pygame.transform.scale(pygame.image.load("Assets/bomb.png"), (48, 48))
-bombSpriteImg_Red = pygame.transform.scale(pygame.image.load("Assets/bomb-red.png"), (48, 48))
-hayBaleScalar = .2
-hayBale = pygame.transform.scale(pygame.image.load("Assets/haybale_crop.png"),
-                                 (421 * hayBaleScalar, 254 * hayBaleScalar))
+bombSpriteImg_Red = pygame.transform.scale(
+    pygame.image.load("Assets/bomb-red.png"), (48, 48)
+)
+hayBaleScalar = 0.2
+hayBale = pygame.transform.scale(
+    pygame.image.load("Assets/haybale_crop.png"),
+    (421 * hayBaleScalar, 254 * hayBaleScalar),
+)
 
 # Sounds
-fire = pygame.mixer.Sound('Assets/Sound Effects/norm_fire.wav')
-explode_sound = pygame.mixer.Sound('Assets/Sound Effects/explosion.wav')
-pygame.mixer.music.load('Assets/Music/Tanks Main BGM.mp3')
+fire = pygame.mixer.Sound("Assets/Sound Effects/norm_fire.wav")
+explode_sound = pygame.mixer.Sound("Assets/Sound Effects/explosion.wav")
+pygame.mixer.music.load("Assets/Music/Tanks Main BGM.mp3")
 
 
 # noinspection PyUnboundLocalVariable
@@ -84,11 +96,13 @@ def main() -> None:
 
         if gameStage == 1:
             if not pygame.mixer.music.get_busy() and not looped:
-                pygame.mixer.music.load('Assets/Music/BGM Loop.mp3')
+                pygame.mixer.music.load("Assets/Music/BGM Loop.mp3")
                 pygame.mixer.music.play(-1)
                 looped = True
             if not gameStarted:
-                player = mys.Player(300, 300, playerTankBaseImg, playerTankTurretImg, TankGroup)
+                player = mys.Player(
+                    300, 300, playerTankBaseImg, playerTankTurretImg, TankGroup
+                )
                 TankGroup.add(player.tankTurret)
                 TankGroup.add(player)
                 TankGroup.move_to_back(player)
@@ -96,7 +110,17 @@ def main() -> None:
                 gameStarted = True
                 x_offset = 0
                 for _ in range(3):
-                    target = mys.Target(hayBale, 600+x_offset, 1, 0, 4, 0, 0, ExplosionSpriteGroup, AllSprites)
+                    target = mys.Target(
+                        hayBale,
+                        600 + x_offset,
+                        1,
+                        0,
+                        4,
+                        0,
+                        0,
+                        ExplosionSpriteGroup,
+                        AllSprites,
+                    )
                     EnemyTankGroup.add(target)
                     AllSprites.add(target)
                     x_offset += 100
@@ -114,9 +138,17 @@ def main() -> None:
             if not gameStarted:
                 x_offset = 50
                 for _ in range(5):
-                    target = mys.Target(hayBale, 300+x_offset+random.randrange(-25, 26),
-                                        1, random.randrange(-2, 2), 4, 0, 0,
-                                        ExplosionSpriteGroup, AllSprites)
+                    target = mys.Target(
+                        hayBale,
+                        300 + x_offset + random.randrange(-25, 26),
+                        1,
+                        random.randrange(-2, 2),
+                        4,
+                        0,
+                        0,
+                        ExplosionSpriteGroup,
+                        AllSprites,
+                    )
                     EnemyTankGroup.add(target)
                     AllSprites.add(target)
                     x_offset += 50
@@ -134,9 +166,17 @@ def main() -> None:
             if not gameStarted:
                 x_offset = 25
                 for _ in range(5):
-                    target = mys.Target(hayBale, 400+x_offset+random.randrange(-150, 150),
-                                        1, random.randrange(-10, 10), random.randrange(-10, 10), 0, 0,
-                                        ExplosionSpriteGroup, AllSprites)
+                    target = mys.Target(
+                        hayBale,
+                        400 + x_offset + random.randrange(-150, 150),
+                        1,
+                        random.randrange(-10, 10),
+                        random.randrange(-10, 10),
+                        0,
+                        0,
+                        ExplosionSpriteGroup,
+                        AllSprites,
+                    )
                     EnemyTankGroup.add(target)
                     AllSprites.add(target)
                     x_offset += 50
@@ -154,10 +194,17 @@ def main() -> None:
             if not gameStarted:
                 x_offset = 25
                 for _ in range(9):
-                    target = mys.Target(hayBale, 400 + x_offset + random.randrange(-350, 350),
-                                        1, random.randrange(-5, 5), random.randrange(-5, 5),
-                                        random.randrange(-1, 2), 0,
-                                        ExplosionSpriteGroup, AllSprites)
+                    target = mys.Target(
+                        hayBale,
+                        400 + x_offset + random.randrange(-350, 350),
+                        1,
+                        random.randrange(-5, 5),
+                        random.randrange(-5, 5),
+                        random.randrange(-1, 2),
+                        0,
+                        ExplosionSpriteGroup,
+                        AllSprites,
+                    )
                     EnemyTankGroup.add(target)
                     AllSprites.add(target)
                     x_offset += 50
@@ -203,6 +250,7 @@ def main() -> None:
             if keys[pygame.K_RETURN]:
                 os.execl(sys.executable, sys.executable, *sys.argv)
         update()
+
         clock.tick(60)
 
 
@@ -229,24 +277,30 @@ def player_movement(sprite: mys.Player, keys) -> None:
     offset = 2
     if keys[pygame.K_w]:
         sprite.y -= moveAmount * dt
-        if pygame.sprite.spritecollide(sprite, WallGroup, False, pygame.sprite.collide_rect):
-            sprite.y += ceil(moveAmount * dt + offset)
     if keys[pygame.K_s]:
         sprite.y += moveAmount * dt
-        if pygame.sprite.spritecollide(sprite, WallGroup, False, pygame.sprite.collide_rect):
-            sprite.y -= ceil(moveAmount * dt + offset)
     if keys[pygame.K_a]:
         sprite.x -= moveAmount * dt
-        if pygame.sprite.spritecollide(sprite, WallGroup, False, pygame.sprite.collide_rect):
-            sprite.x += ceil(moveAmount * dt + offset)
     if keys[pygame.K_d]:
         sprite.x += moveAmount * dt
-        if pygame.sprite.spritecollide(sprite, WallGroup, False, pygame.sprite.collide_rect):
-            sprite.x -= ceil(moveAmount * dt + offset)
     if keys[pygame.K_b] and len(BombGroup) < 1:
-        sprite.bombShoot(bombSpriteImg, bombSpriteImg_Red, BombGroup, ExplosionSpriteGroup, AllSprites, explode_sound)
+        sprite.bombShoot(
+            bombSpriteImg,
+            bombSpriteImg_Red,
+            BombGroup,
+            ExplosionSpriteGroup,
+            AllSprites,
+            explode_sound,
+        )
     if keys[pygame.K_SPACE] and len(PlayerBulletGroup) <= 2:
-        sprite.bulletShoot(bulletSpriteImg, PlayerBulletGroup, False, EnemyBulletGroup, AllSprites, fire)
+        sprite.bulletShoot(
+            bulletSpriteImg,
+            PlayerBulletGroup,
+            False,
+            EnemyBulletGroup,
+            AllSprites,
+            fire,
+        )
 
 
 if __name__ == "__main__":
